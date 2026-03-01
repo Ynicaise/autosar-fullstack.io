@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW Modules — Basic Software | autosar-fullstack.dev</title>
+  <meta name="description" content="AUTOSAR Basic Software modules reference — Com, Dcm, Dem, NvM, EcuM, BswM, MCAL drivers and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<!-- ====== Header ====== -->
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../asw.html">ASW</a></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<!-- ====== Page Header ====== -->
+<section class="module-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="../index.html">Home</a> / <strong>BSW Modules</strong></div>
+    <h1><span>Basic Software</span> Module Reference</h1>
+    <p class="mt-2" style="color:var(--text-secondary);max-width:680px;">Comprehensive integration guide for every AUTOSAR Classic BSW module — role, dependencies, key ARXML parameters, integration strategy, common mistakes, and best practices.</p>
+  </div>
+</section>
+
+<!-- ====== Module Catalogue ====== -->
+<div class="container">
+
+  <!-- Services Layer -->
+  <section class="section">
+    <h2 class="section-title">Services Layer</h2>
+    <p class="section-subtitle">System, diagnostic, memory, and communication management services</p>
+    <div class="module-grid">
+      <a href="com.html" class="module-card"><span class="module-abbr">Com</span><span class="module-name">Communication</span></a>
+      <a href="comm.html" class="module-card"><span class="module-abbr">ComM</span><span class="module-name">Communication Manager</span></a>
+      <a href="nm.html" class="module-card"><span class="module-abbr">Nm</span><span class="module-name">Network Management</span></a>
+      <a href="ecum.html" class="module-card"><span class="module-abbr">EcuM</span><span class="module-name">ECU State Manager</span></a>
+      <a href="bswm.html" class="module-card"><span class="module-abbr">BswM</span><span class="module-name">BSW Mode Manager</span></a>
+      <a href="dcm.html" class="module-card"><span class="module-abbr">Dcm</span><span class="module-name">Diagnostic Communication Manager</span></a>
+      <a href="dem.html" class="module-card"><span class="module-abbr">Dem</span><span class="module-name">Diagnostic Event Manager</span></a>
+      <a href="nvm.html" class="module-card"><span class="module-abbr">NvM</span><span class="module-name">NVRAM Manager</span></a>
+      <a href="wdgm.html" class="module-card"><span class="module-abbr">WdgM</span><span class="module-name">Watchdog Manager</span></a>
+      <a href="os.html" class="module-card"><span class="module-abbr">OS</span><span class="module-name">Operating System</span></a>
+      <a href="rte.html" class="module-card"><span class="module-abbr">RTE</span><span class="module-name">Runtime Environment</span></a>
+    </div>
+  </section>
+
+  <!-- Communication Stack -->
+  <section class="section">
+    <h2 class="section-title">Communication &amp; Transport</h2>
+    <p class="section-subtitle">PDU routing, multiplexing, and transport protocol modules</p>
+    <div class="module-grid">
+      <a href="pdur.html" class="module-card"><span class="module-abbr">PduR</span><span class="module-name">PDU Router</span></a>
+      <a href="ipdum.html" class="module-card"><span class="module-abbr">IpduM</span><span class="module-name">I-PDU Multiplexer</span></a>
+      <a href="cantp.html" class="module-card"><span class="module-abbr">CanTP</span><span class="module-name">CAN Transport Protocol</span></a>
+      <a href="j1939tp.html" class="module-card"><span class="module-abbr">J1939TP</span><span class="module-name">J1939 Transport Protocol</span></a>
+    </div>
+  </section>
+
+  <!-- ECU Abstraction -->
+  <section class="section">
+    <h2 class="section-title">ECU Abstraction Layer</h2>
+    <p class="section-subtitle">Communication and I/O hardware abstraction interfaces</p>
+    <div class="module-grid">
+      <a href="canif.html" class="module-card"><span class="module-abbr">CanIf</span><span class="module-name">CAN Interface</span></a>
+      <a href="linif.html" class="module-card"><span class="module-abbr">LinIf</span><span class="module-name">LIN Interface</span></a>
+      <a href="frif.html" class="module-card"><span class="module-abbr">FrIf</span><span class="module-name">FlexRay Interface</span></a>
+      <a href="ethif.html" class="module-card"><span class="module-abbr">EthIf</span><span class="module-name">Ethernet Interface</span></a>
+      <a href="fee.html" class="module-card"><span class="module-abbr">Fee</span><span class="module-name">Flash EEPROM Emulation</span></a>
+      <a href="ea.html" class="module-card"><span class="module-abbr">Ea</span><span class="module-name">EEPROM Abstraction</span></a>
+      <a href="iohwab.html" class="module-card"><span class="module-abbr">IoHwAb</span><span class="module-name">I/O Hardware Abstraction</span></a>
+    </div>
+  </section>
+
+  <!-- MCAL -->
+  <section class="section">
+    <h2 class="section-title">Microcontroller Abstraction Layer (MCAL)</h2>
+    <p class="section-subtitle">Low-level hardware driver modules</p>
+    <div class="module-grid">
+      <a href="can.html" class="module-card"><span class="module-abbr">Can</span><span class="module-name">CAN Driver</span></a>
+      <a href="lin.html" class="module-card"><span class="module-abbr">Lin</span><span class="module-name">LIN Driver</span></a>
+      <a href="fr.html" class="module-card"><span class="module-abbr">Fr</span><span class="module-name">FlexRay Driver</span></a>
+      <a href="eth.html" class="module-card"><span class="module-abbr">Eth</span><span class="module-name">Ethernet Driver</span></a>
+      <a href="spi.html" class="module-card"><span class="module-abbr">Spi</span><span class="module-name">SPI Handler/Driver</span></a>
+      <a href="adc.html" class="module-card"><span class="module-abbr">Adc</span><span class="module-name">ADC Driver</span></a>
+      <a href="dio.html" class="module-card"><span class="module-abbr">Dio</span><span class="module-name">Digital I/O Driver</span></a>
+      <a href="pwm.html" class="module-card"><span class="module-abbr">Pwm</span><span class="module-name">PWM Driver</span></a>
+      <a href="icu.html" class="module-card"><span class="module-abbr">Icu</span><span class="module-name">Input Capture Unit</span></a>
+      <a href="gpt.html" class="module-card"><span class="module-abbr">Gpt</span><span class="module-name">General Purpose Timer</span></a>
+      <a href="port.html" class="module-card"><span class="module-abbr">Port</span><span class="module-name">Port Driver</span></a>
+      <a href="fls.html" class="module-card"><span class="module-abbr">Fls</span><span class="module-name">Flash Driver</span></a>
+      <a href="wdg.html" class="module-card"><span class="module-abbr">Wdg</span><span class="module-name">Watchdog Driver</span></a>
+      <a href="mcu.html" class="module-card"><span class="module-abbr">Mcu</span><span class="module-name">MCU Driver</span></a>
+    </div>
+  </section>
+
+</div>
+
+<!-- ====== Footer ====== -->
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2026 autosar-fullstack.dev — Yann Nicaise. Built with pure HTML, CSS &amp; JS.</p>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>
