@@ -217,6 +217,88 @@ pre code { background: none; padding: 0; }
     var(--bg-primary);
 }
 
+/* --- Profile photo ---------------------------------------- */
+.profile-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--accent);
+  box-shadow: 0 0 20px rgba(88, 166, 255, .25);
+  flex-shrink: 0;
+}
+
+/* Hero page – side-by-side */
+.hero-intro {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  text-align: left;
+}
+
+.hero-intro .profile-photo {
+  width: 150px;
+  height: 150px;
+}
+
+.hero-intro-text {
+  flex: 1;
+}
+
+.hero-intro-text .subtitle {
+  margin-left: 0;
+}
+
+/* About page – side-by-side */
+.profile-intro {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.profile-intro .profile-photo {
+  width: 100px;
+  height: 100px;
+}
+
+.profile-intro-text {
+  text-align: left;
+}
+
+.profile-intro-text h1 {
+  margin-bottom: .25rem;
+}
+
+@media (max-width: 600px) {
+  .profile-photo {
+    width: 96px;
+    height: 96px;
+  }
+  .hero-intro {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  .hero-intro .profile-photo {
+    width: 110px;
+    height: 110px;
+  }
+  .hero-intro-text {
+    text-align: center;
+  }
+  .profile-intro {
+    flex-direction: column;
+    text-align: center;
+  }
+  .profile-intro .profile-photo {
+    width: 96px;
+    height: 96px;
+  }
+  .profile-intro-text {
+    text-align: center;
+  }
+}
+
 .hero-badge {
   display: inline-block;
   font-family: var(--font-mono);
