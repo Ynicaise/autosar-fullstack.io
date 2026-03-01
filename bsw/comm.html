@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — ComM | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR ComM — Communication Manager">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">ComM — Gestionnaire de Communication</span><span class="i18n-en">ComM — Communication Manager</span></h1>
+    <p><span class="i18n-fr">Gère les modes de communication (NO_COM, SILENT_COM, FULL_COM) des canaux réseau et coordonne les demandes des utilisateurs (SWC, Dcm) avec le Network Management.</span><span class="i18n-en">Manages communication modes (NO_COM, SILENT_COM, FULL_COM) of network channels and coordinates user requests (SWC, Dcm) with Network Management.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Couche Services</span><span class="i18n-en">Services Layer</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="com.html">Com</a></li>
+        <li><a href="comm.html" class="active">ComM</a></li>
+        <li><a href="nm.html">Nm</a></li>
+        <li><a href="ecum.html">EcuM</a></li>
+        <li><a href="bswwm.html">BswM</a></li>
+        <li><a href="dcm.html">Dcm</a></li>
+        <li><a href="dem.html">Dem</a></li>
+        <li><a href="nvm.html">NvM</a></li>
+        <li><a href="wdgM.html">WdgM</a></li>
+        <li><a href="os.html">OS</a></li>
+        <li><a href="rte.html">RTE</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>ComM</strong> coordonne les requêtes de communication provenant des SWCs et du Dcm. Il gère l'état de chaque canal réseau (NO_COM → FULL_COM) et interagit avec le Nm pour l'entrée/sortie du réseau. Il notifie le BswM de chaque changement de mode.</span><span class="i18n-en"><strong>ComM</strong> coordinates communication requests from SWCs and Dcm. It manages the state of each network channel (NO_COM → FULL_COM) and interacts with Nm for network entry/exit. It notifies BswM of each mode change.</span></p>
+
+      <h3><span class="i18n-fr">Dépendances principales</span><span class="i18n-en">Key Dependencies</span></h3>
+      <ul>
+        <li><strong>Nm</strong> — <span class="i18n-fr">gestion du réseau (network request / release)</span><span class="i18n-en">network management (network request / release)</span></li>
+        <li><strong>BswM</strong> — <span class="i18n-fr">notification de mode</span><span class="i18n-en">mode notification</span></li>
+        <li><strong>EcuM</strong> — <span class="i18n-fr">source de wakeup</span><span class="i18n-en">wakeup source</span></li>
+      </ul>
+
+      <h2 id="config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></h2>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Conteneur</span><span class="i18n-en">Container</span></th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>ComMChannel</td><td><span class="i18n-fr">Canal réseau (bus type, Nm variant)</span><span class="i18n-en">Network channel (bus type, Nm variant)</span></td></tr>
+          <tr><td>ComMUser</td><td><span class="i18n-fr">Utilisateur demandant la communication</span><span class="i18n-en">User requesting communication</span></td></tr>
+          <tr><td>ComMPnc</td><td><span class="i18n-fr">Partial Network Cluster (PNC)</span><span class="i18n-en">Partial Network Cluster (PNC)</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-sr">Channel</span> <span class="i18n-fr">ComMChannel &amp; demande de communication</span><span class="i18n-en">ComMChannel &amp; Communication Request</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Configuration d'un canal ComM CAN et demande de FULL_COMMUNICATION depuis un SWC via le RTE.</span><span class="i18n-en">ComM CAN channel configuration and FULL_COMMUNICATION request from a SWC via the RTE.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;COMM-CHANNEL&gt;
+  &lt;SHORT-NAME&gt;
+    ComMChannel_CAN0
+  &lt;/SHORT-NAME&gt;
+  &lt;COMM-BUS-TYPE&gt;CAN&lt;/COMM-BUS-TYPE&gt;
+  &lt;COMM-NM-VARIANT&gt;FULL&lt;/COMM-NM-VARIANT&gt;
+  &lt;COMM-MAIN-FUNCTION-PERIOD&gt;
+    0.01
+  &lt;/COMM-MAIN-FUNCTION-PERIOD&gt;
+&lt;/COMM-CHANNEL&gt;
+
+&lt;COMM-USER&gt;
+  &lt;SHORT-NAME&gt;ComMUser_App&lt;/SHORT-NAME&gt;
+  &lt;COMM-CHANNEL-REFS&gt;
+    &lt;COMM-CHANNEL-REF&gt;
+      ComMChannel_CAN0
+    &lt;/COMM-CHANNEL-REF&gt;
+  &lt;/COMM-CHANNEL-REFS&gt;
+&lt;/COMM-USER&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Application SWC</span>
+<pre><code>#include "ComM.h"
+#include "Rte_AppSwc.h"
+
+#define ComMConf_User_App  0U
+
+/* SWC requests full communication */
+void App_RequestComm(void)
+{
+  ComM_RequestComMode(
+    ComMConf_User_App,
+    COMM_FULL_COMMUNICATION
+  );
+}
+
+/* SWC releases communication */
+void App_ReleaseComm(void)
+{
+  ComM_RequestComMode(
+    ComMConf_User_App,
+    COMM_NO_COMMUNICATION
+  );
+}
+
+/* Mode change notification via RTE */
+void App_ComM_ModeNotification(
+  ComM_ModeType Mode)
+{
+  if (Mode == COMM_FULL_COMMUNICATION)
+  {
+    /* Network is ready — start
+     * sending application data */
+    App_StartTransmission();
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Utilisez les <strong>PNC (Partial Network Clusters)</strong> pour optimiser la consommation énergétique — seuls les nœuds concernés restent actifs. Vérifiez que tous les utilisateurs ComM libèrent leur communication avant l'entrée en sleep.</span><span class="i18n-en"><strong>Tip:</strong> Use <strong>PNC (Partial Network Clusters)</strong> to optimize power consumption — only concerned nodes remain active. Verify that all ComM users release communication before entering sleep.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="com.html" class="prev">← Com</a>
+        <a href="nm.html" class="next">Nm →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

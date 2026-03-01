@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — CanTp | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR CanTp — CAN Transport Protocol">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">CanTp — Protocole de Transport CAN</span><span class="i18n-en">CanTp — CAN Transport Protocol</span></h1>
+    <p><span class="i18n-fr">Segmentation et réassemblage des messages de plus de 8 octets sur CAN (ISO 15765-2) : Single Frame, First Frame, Consecutive Frame, Flow Control.</span><span class="i18n-en">Segmentation and reassembly of messages longer than 8 bytes on CAN (ISO 15765-2): Single Frame, First Frame, Consecutive Frame, Flow Control.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Communication &amp; Transport</span><span class="i18n-en">Communication &amp; Transport</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="pdur.html">PduR</a></li>
+        <li><a href="ipdum.html">IpduM</a></li>
+        <li><a href="cantp.html" class="active">CanTp</a></li>
+        <li><a href="j1939tp.html">J1939Tp</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>CanTp</strong> implémente le protocole ISO 15765-2 pour transporter les messages multi-trames sur CAN. Il est principalement utilisé pour les communications diagnostic (UDS via Dcm) mais aussi pour les grands PDUs applicatifs. Il gère les types de trames SF, FF, CF et FC avec les paramètres BS (Block Size), STmin et les timeouts N_As/N_Bs/N_Cs.</span><span class="i18n-en"><strong>CanTp</strong> implements the ISO 15765-2 protocol for multi-frame message transport on CAN. It is primarily used for diagnostic communications (UDS via Dcm) but also for large application PDUs. It manages frame types SF, FF, CF and FC with BS (Block Size), STmin parameters and N_As/N_Bs/N_Cs timeouts.</span></p>
+
+      <h3><span class="i18n-fr">Dépendances principales</span><span class="i18n-en">Key Dependencies</span></h3>
+      <ul>
+        <li><strong>PduR</strong> — <span class="i18n-fr">routage des N-PDUs (vers Dcm / Com)</span><span class="i18n-en">N-PDU routing (to Dcm / Com)</span></li>
+        <li><strong>CanIf</strong> — <span class="i18n-fr">envoi / réception des trames CAN</span><span class="i18n-en">CAN frame send / receive</span></li>
+      </ul>
+
+      <h2 id="config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></h2>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Conteneur</span><span class="i18n-en">Container</span></th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>CanTpChannel</td><td><span class="i18n-fr">Mode (half-duplex / full-duplex)</span><span class="i18n-en">Mode (half-duplex / full-duplex)</span></td></tr>
+          <tr><td>CanTpRxNSdu</td><td><span class="i18n-fr">N-SDU en réception (BS, STmin, addressing)</span><span class="i18n-en">RX N-SDU (BS, STmin, addressing)</span></td></tr>
+          <tr><td>CanTpTxNSdu</td><td><span class="i18n-fr">N-SDU en émission (timeouts, padding)</span><span class="i18n-en">TX N-SDU (timeouts, padding)</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">TP</span> <span class="i18n-fr">CanTp RX N-SDU diagnostic &amp; flow control</span><span class="i18n-en">CanTp Diagnostic RX N-SDU &amp; Flow Control</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Configuration d'un N-SDU de réception pour les requêtes diagnostic UDS et paramètres de flow control.</span><span class="i18n-en">RX N-SDU configuration for UDS diagnostic requests and flow control parameters.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;CANTP-RX-NSDU&gt;
+  &lt;SHORT-NAME&gt;
+    CanTpRxNSdu_Diag_Phys
+  &lt;/SHORT-NAME&gt;
+  &lt;CANTP-RX-ADDRESSING-FORMAT&gt;
+    NORMAL
+  &lt;/CANTP-RX-ADDRESSING-FORMAT&gt;
+  &lt;CANTP-RX-DL&gt;8&lt;/CANTP-RX-DL&gt;
+  &lt;CANTP-RX-PADDING-ACTIVATION&gt;
+    ON
+  &lt;/CANTP-RX-PADDING-ACTIVATION&gt;
+  &lt;BS&gt;0&lt;/BS&gt;  &lt;!-- no limit --&gt;
+  &lt;STMIN&gt;10&lt;/STMIN&gt;  &lt;!-- 10 ms --&gt;
+  &lt;N-AR-TIMEOUT&gt;1.0&lt;/N-AR-TIMEOUT&gt;
+  &lt;N-BR-TIMEOUT&gt;1.0&lt;/N-BR-TIMEOUT&gt;
+  &lt;N-CR-TIMEOUT&gt;1.0&lt;/N-CR-TIMEOUT&gt;
+  &lt;CANTP-RX-NPDU-REF&gt;
+    CanIfRxPdu_Diag_Phys
+  &lt;/CANTP-RX-NPDU-REF&gt;
+  &lt;CANTP-TX-FC-NPDU-REF&gt;
+    CanIfTxPdu_Diag_Resp
+  &lt;/CANTP-TX-FC-NPDU-REF&gt;
+&lt;/CANTP-RX-NSDU&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — CanTp Segmentation</span>
+<pre><code>/* Multi-frame RX sequence:
+ *
+ * Tester → ECU:
+ *
+ * [FF] First Frame
+ *  PCI: 0x10 | length
+ *  Payload: first 6 bytes
+ *
+ * ECU → Tester:
+ * [FC] Flow Control
+ *  BS=0, STmin=10ms
+ *  (accept all CFs, 10ms apart)
+ *
+ * Tester → ECU:
+ * [CF] Consecutive Frame (SN=1)
+ *  7 bytes payload
+ * [CF] SN=2, SN=3...
+ *  Until complete message received
+ */
+
+/* CanTp_MainFunction() manages:
+ * - FC transmission timing
+ * - CF sequence number check
+ * - N_Cr timeout monitoring
+ * - Buffer management via
+ *   PduR_CanTpCopyRxData()
+ *
+ * On completion:
+ *   PduR_CanTpRxIndication()
+ *   → Dcm processes UDS request
+ */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Calibrez le STmin en fonction de la charge bus — un STmin trop faible provoque des pertes de trames. Activez le padding pour éviter les trames de taille variable qui compliquent le debug. Les timeouts N_Ar/N_Br/N_Cr doivent être conformes à la spécification OEM.</span><span class="i18n-en"><strong>Tip:</strong> Calibrate STmin based on bus load — a too-low STmin causes frame loss. Enable padding to avoid variable-length frames that complicate debugging. N_Ar/N_Br/N_Cr timeouts must comply with OEM specification.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="ipdum.html" class="prev">← IpduM</a>
+        <a href="j1939tp.html" class="next">J1939Tp →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

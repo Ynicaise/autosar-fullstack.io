@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Pwm | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Pwm Driver — MCAL Pulse Width Modulation">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Pwm — Driver PWM</span><span class="i18n-en">Pwm — PWM Driver</span></h1>
+    <p><span class="i18n-fr">Driver MCAL de la modulation de largeur d'impulsion : génération de signaux PWM pour le contrôle de moteurs, LEDs, vannes et actionneurs.</span><span class="i18n-en">Pulse Width Modulation MCAL driver: PWM signal generation for motor control, LEDs, valves and actuators.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html">Can</a></li><li><a href="lin.html">Lin</a></li><li><a href="fr.html">Fr</a></li><li><a href="eth.html">Eth</a></li><li><a href="spi.html">Spi</a></li><li><a href="adc.html">Adc</a></li><li><a href="dio.html">Dio</a></li>
+        <li><a href="pwm.html" class="active">Pwm</a></li>
+        <li><a href="icu.html">Icu</a></li><li><a href="gpt.html">Gpt</a></li><li><a href="port.html">Port</a></li><li><a href="fls.html">Fls</a></li><li><a href="wdg.html">Wdg</a></li><li><a href="mcu.html">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le driver <strong>Pwm</strong> configure et pilote les canaux timer du MCU en mode PWM. Chaque canal génère un signal avec une période fixe et un rapport cyclique ajustable runtime. L'IoHwAb utilise le Pwm pour contrôler des actionneurs (moteur DC, servo, éclairage LED dimmable).</span><span class="i18n-en">The <strong>Pwm</strong> driver configures and controls MCU timer channels in PWM mode. Each channel generates a signal with a fixed period and runtime-adjustable duty cycle. IoHwAb uses Pwm to control actuators (DC motor, servo, dimmable LED lighting).</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-init">Channel</span> <span class="i18n-fr">Pwm Channel &amp; SetDutyCycle</span><span class="i18n-en">Pwm Channel &amp; SetDutyCycle</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;PWM-CHANNEL-CONFIGURATION&gt;
+  &lt;SHORT-NAME&gt;
+    PwmCh_FanMotor
+  &lt;/SHORT-NAME&gt;
+  &lt;PWM-CHANNEL-ID&gt;0&lt;/PWM-CHANNEL-ID&gt;
+  &lt;PWM-PERIOD-DEFAULT&gt;
+    0.001  &lt;!-- 1 ms = 1 kHz --&gt;
+  &lt;/PWM-PERIOD-DEFAULT&gt;
+  &lt;PWM-DUTY-DEFAULT&gt;
+    0  &lt;!-- 0% at startup --&gt;
+  &lt;/PWM-DUTY-DEFAULT&gt;
+  &lt;PWM-POLARITY&gt;HIGH&lt;/PWM-POLARITY&gt;
+  &lt;PWM-IDLE-STATE&gt;LOW&lt;/PWM-IDLE-STATE&gt;
+  &lt;PWM-HW-TIMER&gt;
+    TIMER_2_CH_1
+  &lt;/PWM-HW-TIMER&gt;
+&lt;/PWM-CHANNEL-CONFIGURATION&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Pwm_SetDutyCycle</span>
+<pre><code>#include "Pwm.h"
+
+/* Set fan motor speed via PWM
+ * duty cycle (0x0000..0x8000)
+ *
+ * 0x0000 =   0%  → fan off
+ * 0x4000 =  50%  → half speed
+ * 0x8000 = 100%  → full speed
+ */
+void SetFanSpeed(uint8 pct)
+{
+  uint16 duty;
+
+  /* Scale 0-100% → 0x0000-0x8000 */
+  duty = (uint16)(
+    ((uint32)pct * 0x8000U) / 100U
+  );
+
+  Pwm_SetDutyCycle(
+    PwmConf_Ch_FanMotor,
+    duty);
+}
+
+/* Change period + duty at runtime
+ * (for variable-frequency drives)
+ */
+Pwm_SetPeriodAndDuty(
+  PwmConf_Ch_FanMotor,
+  2000U,   /* period in ticks */
+  0x4000U  /* 50% duty */
+);</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Configurez le <code>PWM-IDLE-STATE</code> à LOW pour que l'actionneur soit désactivé si le MCU reset. Pour les moteurs, la fréquence PWM doit être au-dessus de la plage audible (&gt; 20 kHz) pour éviter le bruit. Utilisez <code>Pwm_SetOutputToIdle()</code> pour un arrêt propre.</span><span class="i18n-en"><strong>Tip:</strong> Set <code>PWM-IDLE-STATE</code> to LOW so the actuator is disabled on MCU reset. For motors, PWM frequency should be above audible range (&gt; 20 kHz) to avoid noise. Use <code>Pwm_SetOutputToIdle()</code> for clean shutdown.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="dio.html" class="prev">← Dio</a>
+        <a href="icu.html" class="next">Icu →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer"><div class="container"><p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p></div></footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — FrIf | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR FrIf — FlexRay Interface">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">FrIf — Interface FlexRay</span><span class="i18n-en">FrIf — FlexRay Interface</span></h1>
+    <p><span class="i18n-fr">Abstraction du driver FlexRay : gestion des cycles de communication TDMA, mapping des PDUs sur les slots et coordination des job lists.</span><span class="i18n-en">FlexRay driver abstraction: TDMA communication cycle management, PDU-to-slot mapping and job list coordination.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Abstraction ECU</span><span class="i18n-en">ECU Abstraction</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="canif.html">CanIf</a></li>
+        <li><a href="linif.html">LinIf</a></li>
+        <li><a href="frif.html" class="active">FrIf</a></li>
+        <li><a href="ethif.html">EthIf</a></li>
+        <li><a href="fee.html">Fee</a></li>
+        <li><a href="ea.html">Ea</a></li>
+        <li><a href="iohwab.html">IoHwAb</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>FrIf</strong> abstrait le driver FlexRay pour les couches supérieures. Il gère les clusters FlexRay, la synchronisation des cycles de communication et les job lists qui définissent quand lire/écrire les buffers de messages dans les slots statiques et dynamiques.</span><span class="i18n-en"><strong>FrIf</strong> abstracts the FlexRay driver for upper layers. It manages FlexRay clusters, communication cycle synchronization and job lists that define when to read/write message buffers in static and dynamic slots.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-cs">Cluster</span> <span class="i18n-fr">FrIf Cluster &amp; Job List</span><span class="i18n-en">FrIf Cluster &amp; Job List</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;FRIF-CLUSTER&gt;
+  &lt;SHORT-NAME&gt;FrIfCluster_0&lt;/SHORT-NAME&gt;
+  &lt;FR-CONTROLLER-REF&gt;
+    FrController_0
+  &lt;/FR-CONTROLLER-REF&gt;
+  &lt;CYCLE-LENGTH&gt;0.005&lt;/CYCLE-LENGTH&gt;
+  &lt;STATIC-SLOT-DURATION&gt;
+    25  &lt;!-- macroticks --&gt;
+  &lt;/STATIC-SLOT-DURATION&gt;
+  &lt;NUMBER-OF-STATIC-SLOTS&gt;
+    40
+  &lt;/NUMBER-OF-STATIC-SLOTS&gt;
+&lt;/FRIF-CLUSTER&gt;
+
+&lt;FRIF-TX-PDU&gt;
+  &lt;SHORT-NAME&gt;
+    FrIfTxPdu_BrakeCmd
+  &lt;/SHORT-NAME&gt;
+  &lt;FRIF-SLOT-ID&gt;5&lt;/FRIF-SLOT-ID&gt;
+  &lt;FRIF-CYCLE-REPETITION&gt;1&lt;/FRIF-CYCLE-REPETITION&gt;
+&lt;/FRIF-TX-PDU&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — FrIf Job Execution</span>
+<pre><code>/* FrIf_JobListExec_0()
+ * called by OS at the start of
+ * each FlexRay communication cycle.
+ *
+ * Sequence:
+ * 1. Read RX buffers from static
+ *    slots (e.g. slot 3: SensorData)
+ *    → PduR_FrIfRxIndication()
+ *
+ * 2. Write TX buffers to static
+ *    slots (e.g. slot 5: BrakeCmd)
+ *    ← PduR_FrIfTriggerTransmit()
+ *
+ * 3. FlexRay controller transmits
+ *    during assigned slots in the
+ *    5 ms TDMA cycle.
+ */
+
+/* FrIf provides deterministic
+ * communication with guaranteed
+ * latency — ideal for brake,
+ * steering, and powertrain
+ * safety-critical data. */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Les job lists doivent être synchronisées avec le cycle FlexRay. Les slots statiques offrent un accès déterministe (TDMA pur), utilisez-les pour les signaux safety-critical. Les slots dynamiques conviennent aux données événementielles.</span><span class="i18n-en"><strong>Tip:</strong> Job lists must be synchronized with the FlexRay cycle. Static slots offer deterministic access (pure TDMA), use them for safety-critical signals. Dynamic slots are suitable for event-driven data.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="linif.html" class="prev">← LinIf</a>
+        <a href="ethif.html" class="next">EthIf →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

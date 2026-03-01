@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Eth | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Eth Driver — MCAL Ethernet Controller">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Eth — Driver Ethernet</span><span class="i18n-en">Eth — Ethernet Driver</span></h1>
+    <p><span class="i18n-fr">Driver MCAL du contrôleur Ethernet : gestion du MAC, DMA ring buffers, contrôle du PHY (MII/RGMII) et timestamping hardware pour la synchronisation TSN/gPTP.</span><span class="i18n-en">Ethernet controller MCAL driver: MAC management, DMA ring buffers, PHY control (MII/RGMII) and hardware timestamping for TSN/gPTP synchronization.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html">Can</a></li>
+        <li><a href="lin.html">Lin</a></li>
+        <li><a href="fr.html">Fr</a></li>
+        <li><a href="eth.html" class="active">Eth</a></li>
+        <li><a href="spi.html">Spi</a></li>
+        <li><a href="adc.html">Adc</a></li>
+        <li><a href="dio.html">Dio</a></li>
+        <li><a href="pwm.html">Pwm</a></li>
+        <li><a href="icu.html">Icu</a></li>
+        <li><a href="gpt.html">Gpt</a></li>
+        <li><a href="port.html">Port</a></li>
+        <li><a href="fls.html">Fls</a></li>
+        <li><a href="wdg.html">Wdg</a></li>
+        <li><a href="mcu.html">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le driver <strong>Eth</strong> pilote le contrôleur Ethernet MAC intégré au MCU. Il gère les descripteurs DMA (ring buffers TX/RX), la configuration du PHY via MDIO, le filtrage MAC multicast/broadcast et le timestamping hardware pour IEEE 802.1AS (gPTP). Il supporte 100BASE-T1 (BroadR-Reach) et 1000BASE-T1 pour les réseaux véhiculaires.</span><span class="i18n-en">The <strong>Eth</strong> driver controls the MCU's integrated Ethernet MAC controller. It manages DMA descriptors (TX/RX ring buffers), PHY configuration via MDIO, multicast/broadcast MAC filtering and hardware timestamping for IEEE 802.1AS (gPTP). It supports 100BASE-T1 (BroadR-Reach) and 1000BASE-T1 for automotive networks.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-sr">MAC</span> <span class="i18n-fr">Eth Controller &amp; gestion de buffers</span><span class="i18n-en">Eth Controller &amp; Buffer Management</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;ETH-CONTROLLER-CONFIGURATION&gt;
+  &lt;SHORT-NAME&gt;EthCtrl_0&lt;/SHORT-NAME&gt;
+  &lt;ETH-MAC-ADDRESS&gt;
+    02:00:00:00:00:01
+  &lt;/ETH-MAC-ADDRESS&gt;
+  &lt;ETH-SPEED&gt;100MBIT&lt;/ETH-SPEED&gt;
+  &lt;ETH-DUPLEX-MODE&gt;
+    FULL
+  &lt;/ETH-DUPLEX-MODE&gt;
+  &lt;ETH-RX-BUFFER-COUNT&gt;
+    16
+  &lt;/ETH-RX-BUFFER-COUNT&gt;
+  &lt;ETH-TX-BUFFER-COUNT&gt;
+    8
+  &lt;/ETH-TX-BUFFER-COUNT&gt;
+  &lt;ETH-BUFFER-SIZE&gt;
+    1536  &lt;!-- MTU 1500 + headers --&gt;
+  &lt;/ETH-BUFFER-SIZE&gt;
+  &lt;ETH-MDIO-CLAUSE&gt;22&lt;/ETH-MDIO-CLAUSE&gt;
+&lt;/ETH-CONTROLLER-CONFIGURATION&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Eth Buffer API</span>
+<pre><code>#include "Eth.h"
+
+/* TX: provide buffer → transmit */
+BufReq_ReturnType Eth_TxFlow(void)
+{
+  uint8* bufPtr;
+  Eth_BufIdxType bufIdx;
+  uint16 len = 128U;
+
+  /* Get TX buffer from DMA ring */
+  Eth_ProvideTxBuffer(
+    ETH_CTRL_0, &amp;bufIdx,
+    &amp;bufPtr, &amp;len);
+
+  /* Fill Ethernet payload */
+  memcpy(bufPtr, payload, len);
+
+  /* Trigger DMA transmission */
+  Eth_Transmit(ETH_CTRL_0,
+    bufIdx, FRAME_TYPE_IPV4,
+    TRUE, len, destMac);
+
+  return BUFREQ_OK;
+}
+
+/* RX: ISR → EthIf_RxIndication()
+ *
+ * Eth DMA fills RX ring buffers.
+ * Eth_Receive() or ISR processes
+ * completed descriptors and calls
+ * EthIf_RxIndication() for each
+ * received frame.
+ */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Dimensionnez les buffers DMA en fonction du débit attendu — trop peu de descriptors RX cause des drops sous charge. Pour le TSN/gPTP, activez le timestamping hardware (PTP clock) pour une précision sub-microseconde. Utilisez 100BASE-T1 pour minimiser le câblage véhiculaire.</span><span class="i18n-en"><strong>Tip:</strong> Size DMA buffers according to expected throughput — too few RX descriptors cause drops under load. For TSN/gPTP, enable hardware timestamping (PTP clock) for sub-microsecond accuracy. Use 100BASE-T1 to minimize automotive wiring.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="fr.html" class="prev">← Fr</a>
+        <a href="spi.html" class="next">Spi →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

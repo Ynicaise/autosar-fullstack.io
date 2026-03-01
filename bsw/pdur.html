@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — PduR | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR PduR — PDU Router">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">PduR — Routeur de PDU</span><span class="i18n-en">PduR — PDU Router</span></h1>
+    <p><span class="i18n-fr">Point central de routage des Protocol Data Units entre Com, Dcm, les modules Transport (CanTp, J1939Tp) et les interfaces d'abstraction (CanIf, LinIf, EthIf).</span><span class="i18n-en">Central routing point for Protocol Data Units between Com, Dcm, Transport modules (CanTp, J1939Tp) and abstraction interfaces (CanIf, LinIf, EthIf).</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Communication &amp; Transport</span><span class="i18n-en">Communication &amp; Transport</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="pdur.html" class="active">PduR</a></li>
+        <li><a href="ipdum.html">IpduM</a></li>
+        <li><a href="cantp.html">CanTp</a></li>
+        <li><a href="j1939tp.html">J1939Tp</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>PduR</strong> route chaque PDU entre sa source et sa destination selon des tables de routage configurées. Il supporte le routage 1:1, 1:N (multicast), le gatewaying inter-bus et le buffering des transmissions.</span><span class="i18n-en"><strong>PduR</strong> routes each PDU between its source and destination according to configured routing tables. It supports 1:1, 1:N (multicast) routing, inter-bus gatewaying and transmission buffering.</span></p>
+
+      <h3><span class="i18n-fr">Dépendances principales</span><span class="i18n-en">Key Dependencies</span></h3>
+      <ul>
+        <li><strong>Com / Dcm / IpduM</strong> — <span class="i18n-fr">modules source (upper layer)</span><span class="i18n-en">source modules (upper layer)</span></li>
+        <li><strong>CanIf / LinIf / FrIf / EthIf</strong> — <span class="i18n-fr">interfaces bus (lower layer)</span><span class="i18n-en">bus interfaces (lower layer)</span></li>
+        <li><strong>CanTp / J1939Tp</strong> — <span class="i18n-fr">couche transport segmentée</span><span class="i18n-en">segmented transport layer</span></li>
+      </ul>
+
+      <h2 id="config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></h2>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Conteneur</span><span class="i18n-en">Container</span></th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>PduRRoutingPath</td><td><span class="i18n-fr">Chemin de routage (source → destination)</span><span class="i18n-en">Routing path (source → destination)</span></td></tr>
+          <tr><td>PduRSrcPdu</td><td><span class="i18n-fr">PDU source et module originaire</span><span class="i18n-en">Source PDU and originating module</span></td></tr>
+          <tr><td>PduRDestPdu</td><td><span class="i18n-fr">PDU destination et module cible</span><span class="i18n-en">Destination PDU and target module</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-sr">Route</span> <span class="i18n-fr">PduR Routing Path — Com vers CanIf</span><span class="i18n-en">PduR Routing Path — Com to CanIf</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Configuration d'un chemin de routage pour transmettre un I-PDU depuis Com vers le bus CAN via CanIf.</span><span class="i18n-en">Routing path configuration to transmit an I-PDU from Com to the CAN bus via CanIf.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;PDUR-ROUTING-PATH&gt;
+  &lt;SHORT-NAME&gt;
+    Route_VehSpeed_Tx
+  &lt;/SHORT-NAME&gt;
+  &lt;PDUR-SRC-PDU&gt;
+    &lt;SHORT-NAME&gt;Src_VehSpeed&lt;/SHORT-NAME&gt;
+    &lt;SRC-PDU-REF&gt;
+      IPdu_VehSpeed_Tx
+    &lt;/SRC-PDU-REF&gt;
+    &lt;PDUR-SRC-PDU-UP-MODULE&gt;
+      COM
+    &lt;/PDUR-SRC-PDU-UP-MODULE&gt;
+  &lt;/PDUR-SRC-PDU&gt;
+  &lt;PDUR-DEST-PDUS&gt;
+    &lt;PDUR-DEST-PDU&gt;
+      &lt;SHORT-NAME&gt;
+        Dst_VehSpeed
+      &lt;/SHORT-NAME&gt;
+      &lt;DEST-PDU-REF&gt;
+        CanIfTxPdu_VehSpeed
+      &lt;/DEST-PDU-REF&gt;
+      &lt;PDUR-DEST-PDU-LO-MODULE&gt;
+        CANIF
+      &lt;/PDUR-DEST-PDU-LO-MODULE&gt;
+    &lt;/PDUR-DEST-PDU&gt;
+  &lt;/PDUR-DEST-PDUS&gt;
+&lt;/PDUR-ROUTING-PATH&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — PduR Flow</span>
+<pre><code>/* Transmission flow:
+ *
+ * 1. Com_MainFunctionTx() triggers
+ *    PduR_ComTransmit(PduId, PduInfo)
+ *
+ * 2. PduR looks up routing table:
+ *    Src: COM / IPdu_VehSpeed_Tx
+ *    Dst: CANIF / CanIfTxPdu_VehSpeed
+ *
+ * 3. PduR calls:
+ *    CanIf_Transmit(TxPduId, PduInfo)
+ *
+ * 4. CanIf queues the L-PDU into
+ *    the CAN driver TX buffer.
+ */
+
+/* Reception flow (reverse):
+ *
+ * 1. CanIf_RxIndication() called
+ *    by CAN driver on frame arrival
+ *
+ * 2. CanIf calls:
+ *    PduR_CanIfRxIndication(RxPduId)
+ *
+ * 3. PduR routes to Com:
+ *    Com_RxIndication(ComPduId)
+ *
+ * 4. Com unpacks signals and
+ *    notifies SWCs via RTE.
+ */
+
+/* Gateway example: PduR can also
+ * route CanIf → LinIf or
+ * CanIf → EthIf for bridging. */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Activez le buffering PduR uniquement pour les PDUs gateway ou TP — le buffering systématique consomme de la RAM inutilement. Vérifiez que chaque PDU est routé dans la bonne direction (Tx vs Rx) lors de la revue de configuration.</span><span class="i18n-en"><strong>Tip:</strong> Enable PduR buffering only for gateway or TP PDUs — systematic buffering wastes RAM. Verify each PDU is routed in the correct direction (Tx vs Rx) during configuration review.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="index.html" class="prev"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a>
+        <a href="ipdum.html" class="next">IpduM →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

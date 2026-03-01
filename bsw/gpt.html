@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Gpt | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Gpt Driver — MCAL General Purpose Timer">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Gpt — Driver Timer</span><span class="i18n-en">Gpt — General Purpose Timer</span></h1>
+    <p><span class="i18n-fr">Driver MCAL des timers matériels : génération de délais, timeouts, base de temps pour l'OS et déclenchement d'événements périodiques (ADC trigger, scheduling).</span><span class="i18n-en">Hardware timer MCAL driver: delay generation, timeouts, OS time base and periodic event triggering (ADC trigger, scheduling).</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html">Can</a></li><li><a href="lin.html">Lin</a></li><li><a href="fr.html">Fr</a></li><li><a href="eth.html">Eth</a></li><li><a href="spi.html">Spi</a></li><li><a href="adc.html">Adc</a></li><li><a href="dio.html">Dio</a></li><li><a href="pwm.html">Pwm</a></li><li><a href="icu.html">Icu</a></li>
+        <li><a href="gpt.html" class="active">Gpt</a></li>
+        <li><a href="port.html">Port</a></li><li><a href="fls.html">Fls</a></li><li><a href="wdg.html">Wdg</a></li><li><a href="mcu.html">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le driver <strong>Gpt</strong> pilote les timers hardware du MCU en mode compteur. Il supporte les modes <strong>one-shot</strong> (délai unique) et <strong>continu</strong> (périodique). Un canal peut servir de base de temps pour l'OS (system tick), de trigger pour l'ADC, ou de timeout pour des protocoles de communication.</span><span class="i18n-en">The <strong>Gpt</strong> driver controls MCU hardware timers in counter mode. It supports <strong>one-shot</strong> (single delay) and <strong>continuous</strong> (periodic) modes. A channel can serve as OS time base (system tick), ADC trigger, or communication protocol timeout.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">Timer</span> <span class="i18n-fr">Gpt Channel &amp; notification périodique</span><span class="i18n-en">Gpt Channel &amp; Periodic Notification</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;GPT-CHANNEL-CONFIGURATION&gt;
+  &lt;SHORT-NAME&gt;
+    GptCh_OsTick
+  &lt;/SHORT-NAME&gt;
+  &lt;GPT-CHANNEL-MODE&gt;
+    CONTINUOUS
+  &lt;/GPT-CHANNEL-MODE&gt;
+  &lt;GPT-CHANNEL-TICK-FREQUENCY&gt;
+    1000000  &lt;!-- 1 MHz --&gt;
+  &lt;/GPT-CHANNEL-TICK-FREQUENCY&gt;
+  &lt;GPT-NOTIFICATION&gt;
+    Gpt_OsTick_Notification
+  &lt;/GPT-NOTIFICATION&gt;
+  &lt;GPT-HW-TIMER&gt;
+    TIMER_6
+  &lt;/GPT-HW-TIMER&gt;
+&lt;/GPT-CHANNEL-CONFIGURATION&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Gpt Start &amp; Notification</span>
+<pre><code>#include "Gpt.h"
+
+void Gpt_InitTimers(void)
+{
+  /* Start 1 ms periodic tick
+   * 1 MHz × 1000 ticks = 1 ms */
+  Gpt_StartTimer(
+    GptConf_Ch_OsTick,
+    1000U);
+
+  Gpt_EnableNotification(
+    GptConf_Ch_OsTick);
+}
+
+/* ISR callback every 1 ms */
+void Gpt_OsTick_Notification(void)
+{
+  /* Increment OS counter */
+  Os_IncrementCounter(
+    OsCounter_SystemTick);
+
+  /* This drives:
+   * - OsAlarm activations
+   * - Schedule table processing
+   * - Task cycle timing
+   */
+}
+
+/* One-shot timeout example */
+Gpt_StartTimer(
+  GptConf_Ch_Timeout,
+  50000U); /* 50 ms timeout */
+/* Notification fires once */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Réservez un timer hardware dédié pour l'OS tick — ne le partagez pas avec d'autres fonctions. La fréquence du tick OS (typiquement 1 ms) détermine la granularité minimale des alarmes et schedule tables.</span><span class="i18n-en"><strong>Tip:</strong> Reserve a dedicated hardware timer for the OS tick — don't share it with other functions. OS tick frequency (typically 1 ms) determines the minimum granularity of alarms and schedule tables.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="icu.html" class="prev">← Icu</a>
+        <a href="port.html" class="next">Port →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer"><div class="container"><p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p></div></footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

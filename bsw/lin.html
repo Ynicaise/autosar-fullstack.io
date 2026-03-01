@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Lin | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Lin Driver — MCAL LIN Controller">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Lin — Driver LIN</span><span class="i18n-en">Lin — LIN Driver</span></h1>
+    <p><span class="i18n-fr">Driver MCAL du contrôleur LIN : génération du break/sync/PID (Master), envoi/réception des réponses et gestion du mode sleep/wakeup au niveau hardware.</span><span class="i18n-en">LIN controller MCAL driver: break/sync/PID generation (Master), response send/receive and hardware-level sleep/wakeup management.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html">Can</a></li>
+        <li><a href="lin.html" class="active">Lin</a></li>
+        <li><a href="fr.html">Fr</a></li>
+        <li><a href="eth.html">Eth</a></li>
+        <li><a href="spi.html">Spi</a></li>
+        <li><a href="adc.html">Adc</a></li>
+        <li><a href="dio.html">Dio</a></li>
+        <li><a href="pwm.html">Pwm</a></li>
+        <li><a href="icu.html">Icu</a></li>
+        <li><a href="gpt.html">Gpt</a></li>
+        <li><a href="port.html">Port</a></li>
+        <li><a href="fls.html">Fls</a></li>
+        <li><a href="wdg.html">Wdg</a></li>
+        <li><a href="mcu.html">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le driver <strong>Lin</strong> pilote directement le UART/LIN du MCU. En mode Master, il génère le header LIN (break field, sync byte, PID) et gère la réponse (TX ou RX) selon le schedule du LinIf. Il supporte les commandes sleep (0x3C goto-sleep) et wakeup (dominant pulse).</span><span class="i18n-en">The <strong>Lin</strong> driver directly controls the MCU's UART/LIN peripheral. In Master mode, it generates the LIN header (break field, sync byte, PID) and manages the response (TX or RX) according to the LinIf schedule. It supports sleep commands (0x3C goto-sleep) and wakeup (dominant pulse).</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">Channel</span> <span class="i18n-fr">LIN Channel &amp; Lin_SendFrame</span><span class="i18n-en">LIN Channel &amp; Lin_SendFrame</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;LIN-CHANNEL-CONFIGURATION&gt;
+  &lt;SHORT-NAME&gt;
+    LinChannel_0
+  &lt;/SHORT-NAME&gt;
+  &lt;LIN-BAUDRATE&gt;
+    19200  &lt;!-- bit/s --&gt;
+  &lt;/LIN-BAUDRATE&gt;
+  &lt;LIN-BREAK-LENGTH&gt;
+    15  &lt;!-- bit times --&gt;
+  &lt;/LIN-BREAK-LENGTH&gt;
+  &lt;LIN-HW-CHANNEL&gt;
+    UART_2
+  &lt;/LIN-HW-CHANNEL&gt;
+&lt;/LIN-CHANNEL-CONFIGURATION&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Lin_SendFrame</span>
+<pre><code>#include "Lin.h"
+
+/* Called by LinIf for each
+ * schedule table entry */
+Std_ReturnType Lin_SendFrame(
+  uint8 Channel,
+  Lin_PduType* PduInfoPtr)
+{
+  /* 1. Configure UART registers:
+   *    - Set break length (15 bits)
+   *    - Send sync byte (0x55)
+   *    - Calculate &amp; send PID
+   *
+   * 2. Handle response direction:
+   *    TX: load data into UART FIFO
+   *    RX: wait for slave response
+   *
+   * 3. Return status:
+   *    E_OK / E_NOT_OK
+   */
+}
+
+/* Lin_GetStatus() → LinIf polls:
+ * LIN_TX_OK, LIN_RX_OK,
+ * LIN_RX_NO_RESPONSE,
+ * LIN_TX_HEADER_ERROR */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Le break length doit être ≥ 13 bit times (LIN 2.x). Vérifiez la tolérance du baudrate des nœuds esclaves — LIN tolère ±2% mais les composants low-cost peuvent dévier davantage. Surveillez les erreurs <code>LIN_RX_NO_RESPONSE</code> pour détecter les esclaves déconnectés.</span><span class="i18n-en"><strong>Tip:</strong> Break length must be ≥ 13 bit times (LIN 2.x). Check slave node baudrate tolerance — LIN allows ±2% but low-cost components may deviate more. Monitor <code>LIN_RX_NO_RESPONSE</code> errors to detect disconnected slaves.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="can.html" class="prev">← Can</a>
+        <a href="fr.html" class="next">Fr →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

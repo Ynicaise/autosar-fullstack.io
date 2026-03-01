@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture AUTOSAR Classic | autosar-fullstack.dev</title>
+  <meta name="description" content="Architecture en couches AUTOSAR Classic — ASW, RTE, Services, Communication, ECUAL, MCAL et Hardware.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="architecture.html" class="active">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="asw/introduction.html">Introduction</a></li>
+          <li><a href="asw/swc.html">SWC</a></li>
+          <li><a href="asw/cdd.html">CDD</a></li>
+          <li><a href="asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="bsw/com.html">BSW</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span>
+      <span class="lang-sep"></span>
+      <span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="module-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a> / <strong>Architecture</strong></div>
+    <h1><span class="i18n-fr">Architecture en couches <span>AUTOSAR Classic</span></span><span class="i18n-en"><span>AUTOSAR Classic</span> Layered Architecture</span></h1>
+    <p class="mt-2" style="color:var(--text-secondary);max-width:680px;"><span class="i18n-fr">Plateforme Classic — de l'application au hardware</span><span class="i18n-en">Classic platform — from application to hardware</span></p>
+  </div>
+</section>
+
+<section class="section" id="architecture">
+  <div class="container">
+
+    <div class="arch-diagram">
+      <div class="arch-layer asw">
+        <div class="arch-label" style="color:var(--green)"><span class="i18n-fr">Couche Application (ASW)</span><span class="i18n-en">Application Layer (ASW)</span></div>
+        <div class="arch-detail">SWC &nbsp;|&nbsp; CDD &nbsp;|&nbsp; Runnables &nbsp;|&nbsp; Ports &nbsp;|&nbsp; Interfaces</div>
+      </div>
+      <div class="arch-connector">&#9660;</div>
+      <div class="arch-layer rte">
+        <div class="arch-label" style="color:var(--purple)"><span class="i18n-fr">Environnement d'exécution (RTE)</span><span class="i18n-en">Runtime Environment (RTE)</span></div>
+        <div class="arch-detail"><span class="i18n-fr">Couche de communication générée &nbsp;|&nbsp; Sender-Receiver &nbsp;|&nbsp; Client-Server</span><span class="i18n-en">Generated communication layer &nbsp;|&nbsp; Sender-Receiver &nbsp;|&nbsp; Client-Server</span></div>
+      </div>
+      <div class="arch-connector">&#9660;</div>
+      <div class="arch-layer services">
+        <div class="arch-label" style="color:var(--accent)"><span class="i18n-fr">Couche Services</span><span class="i18n-en">Services Layer</span></div>
+        <div class="arch-detail">Com &bull; Dcm &bull; Dem &bull; NvM &bull; EcuM &bull; BswM &bull; WdgM &bull; OS</div>
+      </div>
+      <div class="arch-connector">&#9660;</div>
+      <div class="arch-layer services" style="background:rgba(88,166,255,.05); border-color:rgba(88,166,255,.2);">
+        <div class="arch-label" style="color:var(--accent)"><span class="i18n-fr">Pile Communication &amp; Mémoire</span><span class="i18n-en">Communication &amp; Memory Stack</span></div>
+        <div class="arch-detail">PduR &bull; IpduM &bull; CanTP &bull; J1939TP &bull; Fee &bull; Ea</div>
+      </div>
+      <div class="arch-connector">&#9660;</div>
+      <div class="arch-layer ecual">
+        <div class="arch-label" style="color:var(--orange)"><span class="i18n-fr">Couche d'abstraction ECU (ECUAL)</span><span class="i18n-en">ECU Abstraction Layer (ECUAL)</span></div>
+        <div class="arch-detail">CanIf &bull; LinIf &bull; FrIf &bull; EthIf &bull; IoHwAb</div>
+      </div>
+      <div class="arch-connector">&#9660;</div>
+      <div class="arch-layer mcal">
+        <div class="arch-label" style="color:var(--red)"><span class="i18n-fr">Couche d'abstraction microcontrôleur (MCAL)</span><span class="i18n-en">Microcontroller Abstraction Layer (MCAL)</span></div>
+        <div class="arch-detail">Can &bull; Lin &bull; Fr &bull; Eth &bull; Spi &bull; Adc &bull; Dio &bull; Pwm &bull; Icu &bull; Gpt &bull; Port &bull; Fls &bull; Wdg &bull; Mcu</div>
+      </div>
+      <div class="arch-connector">&#9660;</div>
+      <div class="arch-layer hw">
+        <div class="arch-label"><span class="i18n-fr">Microcontrôleur / Hardware</span><span class="i18n-en">Microcontroller / Hardware</span></div>
+        <div class="arch-detail"><span class="i18n-fr">Registres &bull; Périphériques &bull; Horloge &bull; E/S mappées en mémoire</span><span class="i18n-en">Registers &bull; Peripherals &bull; Clock &bull; Memory-mapped I/O</span></div>
+      </div>
+    </div>
+
+    <!-- Layer descriptions -->
+    <div class="card-grid mt-4">
+      <div class="card">
+        <div class="card-icon text-green">&#9670;</div>
+        <h3>ASW</h3>
+        <p><span class="i18n-fr">Composants logiciels applicatifs (SWC), Complex Device Drivers (CDD), runnables et interfaces de ports. Toute la logique métier réside ici.</span><span class="i18n-en">Application Software Components (SWC), Complex Device Drivers (CDD), runnables and port interfaces. All business logic resides here.</span></p>
+        <a href="asw/introduction.html" class="btn btn-outline btn-sm mt-2"><span class="i18n-fr">Explorer →</span><span class="i18n-en">Explore →</span></a>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="color:var(--purple)">&#9670;</div>
+        <h3>RTE</h3>
+        <p><span class="i18n-fr">Couche de communication automatiquement générée. Gère les patterns Sender-Receiver, Client-Server, Mode-Switch et le mapping des runnables aux tâches OS.</span><span class="i18n-en">Automatically generated communication layer. Handles Sender-Receiver, Client-Server, Mode-Switch patterns and runnable-to-OS-task mapping.</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon text-accent">&#9670;</div>
+        <h3><span class="i18n-fr">Services BSW</span><span class="i18n-en">BSW Services</span></h3>
+        <p><span class="i18n-fr">Services de gestion système (EcuM, BswM), diagnostic (Dcm, Dem), communication (Com, ComM), mémoire (NvM) et supervision (WdgM).</span><span class="i18n-en">System management services (EcuM, BswM), diagnostics (Dcm, Dem), communication (Com, ComM), memory (NvM) and supervision (WdgM).</span></p>
+        <a href="bsw/com.html" class="btn btn-outline btn-sm mt-2"><span class="i18n-fr">Explorer →</span><span class="i18n-en">Explore →</span></a>
+      </div>
+      <div class="card">
+        <div class="card-icon text-orange">&#9670;</div>
+        <h3>ECUAL</h3>
+        <p><span class="i18n-fr">Couche d'abstraction ECU — interfaces de communication (CanIf, LinIf, FrIf, EthIf), abstraction E/S hardware (IoHwAb), émulation mémoire (Fee, Ea).</span><span class="i18n-en">ECU Abstraction Layer — communication interfaces (CanIf, LinIf, FrIf, EthIf), I/O hardware abstraction (IoHwAb), memory emulation (Fee, Ea).</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon text-red">&#9670;</div>
+        <h3>MCAL</h3>
+        <p><span class="i18n-fr">Drivers hardware bas niveau — Can, Lin, Fr, Eth, Spi, Adc, Dio, Pwm, Icu, Gpt, Port, Fls, Wdg, Mcu. Spécifiques au microcontrôleur.</span><span class="i18n-en">Low-level hardware drivers — Can, Lin, Fr, Eth, Spi, Adc, Dio, Pwm, Icu, Gpt, Port, Fls, Wdg, Mcu. Microcontroller-specific.</span></p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2026 autosar-fullstack.dev — Yann Nicaise. <span class="i18n-fr">Conçu en pur HTML, CSS &amp; JS.</span><span class="i18n-en">Built with pure HTML, CSS &amp; JS.</span></p>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

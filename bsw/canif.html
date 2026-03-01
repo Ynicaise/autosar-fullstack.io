@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — CanIf | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR CanIf — CAN Interface">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">CanIf — Interface CAN</span><span class="i18n-en">CanIf — CAN Interface</span></h1>
+    <p><span class="i18n-fr">Abstraction du driver CAN (MCAL) : multiplexage des contrôleurs, filtrage hardware et software des trames, gestion des modes et notifications vers les couches supérieures.</span><span class="i18n-en">CAN driver (MCAL) abstraction: controller multiplexing, hardware and software frame filtering, mode management and upper layer notifications.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Abstraction ECU</span><span class="i18n-en">ECU Abstraction</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="canif.html" class="active">CanIf</a></li>
+        <li><a href="linif.html">LinIf</a></li>
+        <li><a href="frif.html">FrIf</a></li>
+        <li><a href="ethif.html">EthIf</a></li>
+        <li><a href="fee.html">Fee</a></li>
+        <li><a href="ea.html">Ea</a></li>
+        <li><a href="iohwab.html">IoHwAb</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>CanIf</strong> est la couche d'abstraction entre les modules de communication (PduR, CanTp, CanNm) et le driver CAN (MCAL). Il gère les HRH (Hardware Receive Handles) et HTH (Hardware Transmit Handles), le filtrage des CAN IDs, la gestion des modes du contrôleur (STARTED, STOPPED, SLEEP) et le dispatching des notifications RX vers les modules appropriés.</span><span class="i18n-en"><strong>CanIf</strong> is the abstraction layer between communication modules (PduR, CanTp, CanNm) and the CAN driver (MCAL). It manages HRHs (Hardware Receive Handles) and HTHs (Hardware Transmit Handles), CAN ID filtering, controller mode management (STARTED, STOPPED, SLEEP) and RX notification dispatching to appropriate modules.</span></p>
+
+      <h3><span class="i18n-fr">Dépendances principales</span><span class="i18n-en">Key Dependencies</span></h3>
+      <ul>
+        <li><strong>Can</strong> — <span class="i18n-fr">driver CAN hardware (MCAL)</span><span class="i18n-en">CAN hardware driver (MCAL)</span></li>
+        <li><strong>PduR</strong> — <span class="i18n-fr">routage des PDUs en réception</span><span class="i18n-en">RX PDU routing</span></li>
+        <li><strong>CanTp / CanNm</strong> — <span class="i18n-fr">notifications TP et NM</span><span class="i18n-en">TP and NM notifications</span></li>
+        <li><strong>CanTrcv</strong> — <span class="i18n-fr">contrôle du transceiver CAN</span><span class="i18n-en">CAN transceiver control</span></li>
+      </ul>
+
+      <h2 id="config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></h2>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Conteneur</span><span class="i18n-en">Container</span></th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>CanIfHrhCfg</td><td><span class="i18n-fr">Hardware Receive Handle (filtre + controller)</span><span class="i18n-en">Hardware Receive Handle (filter + controller)</span></td></tr>
+          <tr><td>CanIfHthCfg</td><td><span class="i18n-fr">Hardware Transmit Handle</span><span class="i18n-en">Hardware Transmit Handle</span></td></tr>
+          <tr><td>CanIfRxPduCfg</td><td><span class="i18n-fr">PDU en réception (CAN ID, DLC, upper layer)</span><span class="i18n-en">RX PDU (CAN ID, DLC, upper layer)</span></td></tr>
+          <tr><td>CanIfTxPduCfg</td><td><span class="i18n-fr">PDU en émission</span><span class="i18n-en">TX PDU</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-sr">HRH</span> <span class="i18n-fr">CanIf RX PDU &amp; filtrage CAN ID</span><span class="i18n-en">CanIf RX PDU &amp; CAN ID Filtering</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;CANIF-RX-PDU-CFG&gt;
+  &lt;SHORT-NAME&gt;
+    CanIfRxPdu_VehSpeed
+  &lt;/SHORT-NAME&gt;
+  &lt;CANIF-RX-PDU-CAN-ID&gt;
+    0x123
+  &lt;/CANIF-RX-PDU-CAN-ID&gt;
+  &lt;CANIF-RX-PDU-CAN-ID-TYPE&gt;
+    STANDARD
+  &lt;/CANIF-RX-PDU-CAN-ID-TYPE&gt;
+  &lt;CANIF-RX-PDU-DLC&gt;8&lt;/CANIF-RX-PDU-DLC&gt;
+  &lt;CANIF-RX-PDU-USER-TYPE&gt;
+    PDUR
+  &lt;/CANIF-RX-PDU-USER-TYPE&gt;
+  &lt;CANIF-HRH-REF&gt;
+    CanIfHrh_CAN0_Full
+  &lt;/CANIF-HRH-REF&gt;
+&lt;/CANIF-RX-PDU-CFG&gt;
+
+&lt;CANIF-HRH-CFG&gt;
+  &lt;SHORT-NAME&gt;
+    CanIfHrh_CAN0_Full
+  &lt;/SHORT-NAME&gt;
+  &lt;CAN-CONTROLLER-REF&gt;
+    CanController_0
+  &lt;/CAN-CONTROLLER-REF&gt;
+  &lt;CANIF-HRH-TYPE&gt;
+    FULL-CAN
+  &lt;/CANIF-HRH-TYPE&gt;
+  &lt;CANIF-SOFTWARE-FILTER&gt;
+    false
+  &lt;/CANIF-SOFTWARE-FILTER&gt;
+&lt;/CANIF-HRH-CFG&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — CanIf Integration</span>
+<pre><code>/* RX path:
+ *
+ * 1. CAN controller receives frame
+ *    with CAN ID 0x123
+ *
+ * 2. Can driver ISR calls:
+ *    CanIf_RxIndication(
+ *      Hrh, CanId, DLC, Data)
+ *
+ * 3. CanIf matches CAN ID → RxPdu:
+ *    CanIfRxPdu_VehSpeed
+ *
+ * 4. CanIf dispatches to PduR:
+ *    PduR_CanIfRxIndication(
+ *      RxPduId, PduInfoPtr)
+ */
+
+/* TX path: */
+#include "CanIf.h"
+
+Std_ReturnType SendFrame(void)
+{
+  PduInfoType pdu;
+  uint8 data[8] = {0};
+
+  pdu.SduDataPtr = data;
+  pdu.SduLength = 8U;
+
+  return CanIf_Transmit(
+    CanIfConf_TxPdu_VehSpeed,
+    &amp;pdu
+  );
+  /* CanIf queues in HTH buffer,
+   * Can driver transmits on bus */
+}</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Utilisez les <strong>Full-CAN</strong> HRH pour les trames critiques (filtrage hardware) et les <strong>Basic-CAN</strong> HRH avec filtrage software pour les trames moins prioritaires. Vérifiez la cohérence entre les CAN IDs configurés dans CanIf et ceux définis dans la matrice de communication (DBC/ARXML).</span><span class="i18n-en"><strong>Tip:</strong> Use <strong>Full-CAN</strong> HRH for critical frames (hardware filtering) and <strong>Basic-CAN</strong> HRH with software filtering for lower-priority frames. Verify consistency between CAN IDs configured in CanIf and those defined in the communication matrix (DBC/ARXML).</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="index.html" class="prev"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a>
+        <a href="linif.html" class="next">LinIf →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

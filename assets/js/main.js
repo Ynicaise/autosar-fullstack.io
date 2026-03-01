@@ -69,12 +69,19 @@ document.addEventListener('DOMContentLoaded', () => {
   /* --- Copy code blocks ------------------------------------ */
   document.querySelectorAll('pre').forEach(block => {
     const btn = document.createElement('button');
-    btn.textContent = 'Copy';
+    const lang = () => document.documentElement.lang || 'fr';
+    btn.textContent = lang() === 'fr' ? 'Copier' : 'Copy';
     btn.className = 'copy-btn';
     btn.style.cssText =
       'position:absolute;top:8px;right:8px;background:var(--bg-secondary);border:1px solid var(--border);color:var(--text-secondary);font-size:.7rem;padding:2px 8px;border-radius:4px;cursor:pointer;opacity:0;transition:.2s';
     block.style.position = 'relative';
     block.appendChild(btn);
+
+    // Update button text when language changes
+    const observer = new MutationObserver(() => {
+      if (btn.textContent !== '✓') btn.textContent = lang() === 'fr' ? 'Copier' : 'Copy';
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
 
     block.addEventListener('mouseenter', () => (btn.style.opacity = '1'));
     block.addEventListener('mouseleave', () => (btn.style.opacity = '0'));
@@ -84,8 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
         ? block.querySelector('code').textContent
         : block.textContent;
       navigator.clipboard.writeText(code).then(() => {
-        btn.textContent = 'Copied!';
-        setTimeout(() => (btn.textContent = 'Copy'), 1500);
+        const copiedText = lang() === 'fr' ? 'Copié !' : 'Copied!';
+        btn.textContent = copiedText;
+        setTimeout(() => (btn.textContent = lang() === 'fr' ? 'Copier' : 'Copy'), 1500);
       });
     });
   });

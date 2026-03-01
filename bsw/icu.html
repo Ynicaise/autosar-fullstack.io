@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Icu | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Icu Driver — MCAL Input Capture Unit">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Icu — Driver Input Capture</span><span class="i18n-en">Icu — Input Capture Driver</span></h1>
+    <p><span class="i18n-fr">Driver MCAL de l'unité de capture d'entrée : mesure de fréquence, rapport cyclique, temps écoulé, détection d'edges et comptage d'impulsions.</span><span class="i18n-en">Input Capture Unit MCAL driver: frequency measurement, duty cycle, elapsed time, edge detection and pulse counting.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html">Can</a></li><li><a href="lin.html">Lin</a></li><li><a href="fr.html">Fr</a></li><li><a href="eth.html">Eth</a></li><li><a href="spi.html">Spi</a></li><li><a href="adc.html">Adc</a></li><li><a href="dio.html">Dio</a></li><li><a href="pwm.html">Pwm</a></li>
+        <li><a href="icu.html" class="active">Icu</a></li>
+        <li><a href="gpt.html">Gpt</a></li><li><a href="port.html">Port</a></li><li><a href="fls.html">Fls</a></li><li><a href="wdg.html">Wdg</a></li><li><a href="mcu.html">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le driver <strong>Icu</strong> utilise les canaux timer du MCU en mode capture pour mesurer des signaux d'entrée. Il supporte 4 modes : <strong>Signal measurement</strong> (période + duty), <strong>Timestamp</strong> (buffer de timestamps), <strong>Edge detection</strong> (notification sur front) et <strong>Edge counting</strong> (compteur d'impulsions). Utilisé par l'IoHwAb pour les capteurs de vitesse, encodeurs et capteurs de position.</span><span class="i18n-en">The <strong>Icu</strong> driver uses MCU timer channels in capture mode to measure input signals. It supports 4 modes: <strong>Signal measurement</strong> (period + duty), <strong>Timestamp</strong> (timestamp buffer), <strong>Edge detection</strong> (edge notification) and <strong>Edge counting</strong> (pulse counter). Used by IoHwAb for speed sensors, encoders and position sensors.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-sr">Signal</span> <span class="i18n-fr">Icu Channel &amp; mesure de fréquence</span><span class="i18n-en">Icu Channel &amp; Frequency Measurement</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;ICU-CHANNEL&gt;
+  &lt;SHORT-NAME&gt;
+    IcuCh_WheelSpeed
+  &lt;/SHORT-NAME&gt;
+  &lt;ICU-MEASUREMENT-MODE&gt;
+    SIGNAL_MEASUREMENT
+  &lt;/ICU-MEASUREMENT-MODE&gt;
+  &lt;ICU-SIGNAL-MEASUREMENT-PROPERTY&gt;
+    PERIOD_TIME
+  &lt;/ICU-SIGNAL-MEASUREMENT-PROPERTY&gt;
+  &lt;ICU-DEFAULT-START-EDGE&gt;
+    RISING
+  &lt;/ICU-DEFAULT-START-EDGE&gt;
+  &lt;ICU-HW-CHANNEL&gt;
+    TIMER_3_CH_2
+  &lt;/ICU-HW-CHANNEL&gt;
+&lt;/ICU-CHANNEL&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Icu Measurement</span>
+<pre><code>#include "Icu.h"
+
+/* Measure wheel speed sensor
+ * period (rising → rising) */
+void ReadWheelSpeed(void)
+{
+  Icu_ValueType period_ticks;
+
+  Icu_StartSignalMeasurement(
+    IcuConf_Ch_WheelSpeed);
+
+  /* After next 2 rising edges... */
+  period_ticks =
+    Icu_GetTimeElapsed(
+      IcuConf_Ch_WheelSpeed);
+
+  /* Convert ticks → Hz
+   * Timer clock = 1 MHz
+   * f = 1e6 / period_ticks
+   *
+   * Wheel: 48 teeth
+   * RPM = f * 60 / 48
+   */
+}
+
+/* Edge counting mode */
+Icu_StartEdgeCounting(ch);
+/* ... wait ... */
+Icu_ValueType count =
+  Icu_GetEdgeNumbers(ch);
+Icu_ResetEdgeCount(ch);</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Choisissez le prescaler du timer en fonction de la plage de fréquence attendue. Un prescaler trop faible cause un overflow pour les signaux lents, trop élevé perd la résolution pour les signaux rapides. Pour les capteurs à reluctance variable, filtrez le signal en hardware (filtre RC) avant l'entrée ICU.</span><span class="i18n-en"><strong>Tip:</strong> Choose the timer prescaler based on expected frequency range. Too low a prescaler causes overflow for slow signals, too high loses resolution for fast signals. For variable reluctance sensors, filter the signal in hardware (RC filter) before the ICU input.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="pwm.html" class="prev">← Pwm</a>
+        <a href="gpt.html" class="next">Gpt →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer"><div class="container"><p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p></div></footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

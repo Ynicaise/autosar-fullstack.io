@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BSW Modules — Basic Software | autosar-fullstack.dev</title>
-  <meta name="description" content="AUTOSAR Basic Software modules reference — Com, Dcm, Dem, NvM, EcuM, BswM, MCAL drivers and more.">
+  <title>Modules BSW — Logiciel de Base | autosar-fullstack.dev</title>
+  <meta name="description" content="Référence des modules AUTOSAR Basic Software — Com, Dcm, Dem, NvM, EcuM, BswM, drivers MCAL et plus.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
 </head>
 <body>
 
@@ -20,20 +21,35 @@
       <span></span><span></span><span></span>
     </button>
     <ul class="nav-links">
-      <li><a href="../index.html">Home</a></li>
-      <li><a href="../asw.html">ASW</a></li>
-      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="com.html" class="active">BSW</a></li>
       <li><a href="../index.html#contact">Contact</a></li>
     </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span>
+      <span class="lang-sep"></span>
+      <span class="lang-label-en">EN</span>
+    </button>
   </nav>
 </header>
 
 <!-- ====== Page Header ====== -->
 <section class="module-header">
   <div class="container">
-    <div class="breadcrumb"><a href="../index.html">Home</a> / <strong>BSW Modules</strong></div>
-    <h1><span>Basic Software</span> Module Reference</h1>
-    <p class="mt-2" style="color:var(--text-secondary);max-width:680px;">Comprehensive integration guide for every AUTOSAR Classic BSW module — role, dependencies, key ARXML parameters, integration strategy, common mistakes, and best practices.</p>
+    <div class="breadcrumb"><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a> / <strong><span class="i18n-fr">Modules BSW</span><span class="i18n-en">BSW Modules</span></strong></div>
+    <h1><span class="i18n-fr">Référence des modules <span>Logiciel de Base</span></span><span class="i18n-en"><span>Basic Software</span> Module Reference</span></h1>
+    <p class="mt-2" style="color:var(--text-secondary);max-width:680px;"><span class="i18n-fr">Guide d’intégration complet pour chaque module BSW AUTOSAR Classic — rôle, dépendances, paramètres ARXML clés, stratégie d’intégration, erreurs courantes et bonnes pratiques.</span><span class="i18n-en">Comprehensive integration guide for every AUTOSAR Classic BSW module — role, dependencies, key ARXML parameters, integration strategy, common mistakes, and best practices.</span></p>
   </div>
 </section>
 
@@ -42,69 +58,69 @@
 
   <!-- Services Layer -->
   <section class="section">
-    <h2 class="section-title">Services Layer</h2>
-    <p class="section-subtitle">System, diagnostic, memory, and communication management services</p>
+    <h2 class="section-title"><span class="i18n-fr">Couche Services</span><span class="i18n-en">Services Layer</span></h2>
+    <p class="section-subtitle"><span class="i18n-fr">Services de gestion système, diagnostic, mémoire et communication</span><span class="i18n-en">System, diagnostic, memory, and communication management services</span></p>
     <div class="module-grid">
       <a href="com.html" class="module-card"><span class="module-abbr">Com</span><span class="module-name">Communication</span></a>
-      <a href="comm.html" class="module-card"><span class="module-abbr">ComM</span><span class="module-name">Communication Manager</span></a>
-      <a href="nm.html" class="module-card"><span class="module-abbr">Nm</span><span class="module-name">Network Management</span></a>
-      <a href="ecum.html" class="module-card"><span class="module-abbr">EcuM</span><span class="module-name">ECU State Manager</span></a>
-      <a href="bswm.html" class="module-card"><span class="module-abbr">BswM</span><span class="module-name">BSW Mode Manager</span></a>
-      <a href="dcm.html" class="module-card"><span class="module-abbr">Dcm</span><span class="module-name">Diagnostic Communication Manager</span></a>
-      <a href="dem.html" class="module-card"><span class="module-abbr">Dem</span><span class="module-name">Diagnostic Event Manager</span></a>
-      <a href="nvm.html" class="module-card"><span class="module-abbr">NvM</span><span class="module-name">NVRAM Manager</span></a>
-      <a href="wdgm.html" class="module-card"><span class="module-abbr">WdgM</span><span class="module-name">Watchdog Manager</span></a>
-      <a href="os.html" class="module-card"><span class="module-abbr">OS</span><span class="module-name">Operating System</span></a>
-      <a href="rte.html" class="module-card"><span class="module-abbr">RTE</span><span class="module-name">Runtime Environment</span></a>
+      <a href="comm.html" class="module-card"><span class="module-abbr">ComM</span><span class="module-name"><span class="i18n-fr">Gestionnaire de communication</span><span class="i18n-en">Communication Manager</span></span></a>
+      <a href="nm.html" class="module-card"><span class="module-abbr">Nm</span><span class="module-name"><span class="i18n-fr">Gestion réseau</span><span class="i18n-en">Network Management</span></span></a>
+      <a href="ecum.html" class="module-card"><span class="module-abbr">EcuM</span><span class="module-name"><span class="i18n-fr">Gestionnaire d’état ECU</span><span class="i18n-en">ECU State Manager</span></span></a>
+      <a href="bswwm.html" class="module-card"><span class="module-abbr">BswM</span><span class="module-name"><span class="i18n-fr">Gestionnaire de modes BSW</span><span class="i18n-en">BSW Mode Manager</span></span></a>
+      <a href="dcm.html" class="module-card"><span class="module-abbr">Dcm</span><span class="module-name"><span class="i18n-fr">Gestionnaire de communication diagnostic</span><span class="i18n-en">Diagnostic Communication Manager</span></span></a>
+      <a href="dem.html" class="module-card"><span class="module-abbr">Dem</span><span class="module-name"><span class="i18n-fr">Gestionnaire d’événements diagnostic</span><span class="i18n-en">Diagnostic Event Manager</span></span></a>
+      <a href="nvm.html" class="module-card"><span class="module-abbr">NvM</span><span class="module-name"><span class="i18n-fr">Gestionnaire NVRAM</span><span class="i18n-en">NVRAM Manager</span></span></a>
+      <a href="wdgM.html" class="module-card"><span class="module-abbr">WdgM</span><span class="module-name"><span class="i18n-fr">Gestionnaire Watchdog</span><span class="i18n-en">Watchdog Manager</span></span></a>
+      <a href="os.html" class="module-card"><span class="module-abbr">OS</span><span class="module-name"><span class="i18n-fr">Système d’exploitation</span><span class="i18n-en">Operating System</span></span></a>
+      <a href="rte.html" class="module-card"><span class="module-abbr">RTE</span><span class="module-name"><span class="i18n-fr">Environnement d’exécution</span><span class="i18n-en">Runtime Environment</span></span></a>
     </div>
   </section>
 
   <!-- Communication Stack -->
   <section class="section">
     <h2 class="section-title">Communication &amp; Transport</h2>
-    <p class="section-subtitle">PDU routing, multiplexing, and transport protocol modules</p>
+    <p class="section-subtitle"><span class="i18n-fr">Modules de routage PDU, multiplexage et protocoles de transport</span><span class="i18n-en">PDU routing, multiplexing, and transport protocol modules</span></p>
     <div class="module-grid">
-      <a href="pdur.html" class="module-card"><span class="module-abbr">PduR</span><span class="module-name">PDU Router</span></a>
-      <a href="ipdum.html" class="module-card"><span class="module-abbr">IpduM</span><span class="module-name">I-PDU Multiplexer</span></a>
-      <a href="cantp.html" class="module-card"><span class="module-abbr">CanTP</span><span class="module-name">CAN Transport Protocol</span></a>
-      <a href="j1939tp.html" class="module-card"><span class="module-abbr">J1939TP</span><span class="module-name">J1939 Transport Protocol</span></a>
+      <a href="pdur.html" class="module-card"><span class="module-abbr">PduR</span><span class="module-name"><span class="i18n-fr">Routeur PDU</span><span class="i18n-en">PDU Router</span></span></a>
+      <a href="ipdum.html" class="module-card"><span class="module-abbr">IpduM</span><span class="module-name"><span class="i18n-fr">Multiplexeur I-PDU</span><span class="i18n-en">I-PDU Multiplexer</span></span></a>
+      <a href="cantp.html" class="module-card"><span class="module-abbr">CanTP</span><span class="module-name"><span class="i18n-fr">Protocole de transport CAN</span><span class="i18n-en">CAN Transport Protocol</span></span></a>
+      <a href="j1939tp.html" class="module-card"><span class="module-abbr">J1939TP</span><span class="module-name"><span class="i18n-fr">Protocole de transport J1939</span><span class="i18n-en">J1939 Transport Protocol</span></span></a>
     </div>
   </section>
 
   <!-- ECU Abstraction -->
   <section class="section">
-    <h2 class="section-title">ECU Abstraction Layer</h2>
-    <p class="section-subtitle">Communication and I/O hardware abstraction interfaces</p>
+    <h2 class="section-title"><span class="i18n-fr">Couche d’abstraction ECU</span><span class="i18n-en">ECU Abstraction Layer</span></h2>
+    <p class="section-subtitle"><span class="i18n-fr">Interfaces d’abstraction communication et E/S hardware</span><span class="i18n-en">Communication and I/O hardware abstraction interfaces</span></p>
     <div class="module-grid">
-      <a href="canif.html" class="module-card"><span class="module-abbr">CanIf</span><span class="module-name">CAN Interface</span></a>
-      <a href="linif.html" class="module-card"><span class="module-abbr">LinIf</span><span class="module-name">LIN Interface</span></a>
-      <a href="frif.html" class="module-card"><span class="module-abbr">FrIf</span><span class="module-name">FlexRay Interface</span></a>
-      <a href="ethif.html" class="module-card"><span class="module-abbr">EthIf</span><span class="module-name">Ethernet Interface</span></a>
-      <a href="fee.html" class="module-card"><span class="module-abbr">Fee</span><span class="module-name">Flash EEPROM Emulation</span></a>
-      <a href="ea.html" class="module-card"><span class="module-abbr">Ea</span><span class="module-name">EEPROM Abstraction</span></a>
-      <a href="iohwab.html" class="module-card"><span class="module-abbr">IoHwAb</span><span class="module-name">I/O Hardware Abstraction</span></a>
+      <a href="canif.html" class="module-card"><span class="module-abbr">CanIf</span><span class="module-name"><span class="i18n-fr">Interface CAN</span><span class="i18n-en">CAN Interface</span></span></a>
+      <a href="linif.html" class="module-card"><span class="module-abbr">LinIf</span><span class="module-name"><span class="i18n-fr">Interface LIN</span><span class="i18n-en">LIN Interface</span></span></a>
+      <a href="frif.html" class="module-card"><span class="module-abbr">FrIf</span><span class="module-name"><span class="i18n-fr">Interface FlexRay</span><span class="i18n-en">FlexRay Interface</span></span></a>
+      <a href="ethif.html" class="module-card"><span class="module-abbr">EthIf</span><span class="module-name"><span class="i18n-fr">Interface Ethernet</span><span class="i18n-en">Ethernet Interface</span></span></a>
+      <a href="fee.html" class="module-card"><span class="module-abbr">Fee</span><span class="module-name"><span class="i18n-fr">Émulation Flash EEPROM</span><span class="i18n-en">Flash EEPROM Emulation</span></span></a>
+      <a href="ea.html" class="module-card"><span class="module-abbr">Ea</span><span class="module-name"><span class="i18n-fr">Abstraction EEPROM</span><span class="i18n-en">EEPROM Abstraction</span></span></a>
+      <a href="iohwab.html" class="module-card"><span class="module-abbr">IoHwAb</span><span class="module-name"><span class="i18n-fr">Abstraction E/S Hardware</span><span class="i18n-en">I/O Hardware Abstraction</span></span></a>
     </div>
   </section>
 
   <!-- MCAL -->
   <section class="section">
-    <h2 class="section-title">Microcontroller Abstraction Layer (MCAL)</h2>
-    <p class="section-subtitle">Low-level hardware driver modules</p>
+    <h2 class="section-title"><span class="i18n-fr">Couche d’abstraction microcontrôleur (MCAL)</span><span class="i18n-en">Microcontroller Abstraction Layer (MCAL)</span></h2>
+    <p class="section-subtitle"><span class="i18n-fr">Modules drivers hardware bas niveau</span><span class="i18n-en">Low-level hardware driver modules</span></p>
     <div class="module-grid">
-      <a href="can.html" class="module-card"><span class="module-abbr">Can</span><span class="module-name">CAN Driver</span></a>
-      <a href="lin.html" class="module-card"><span class="module-abbr">Lin</span><span class="module-name">LIN Driver</span></a>
-      <a href="fr.html" class="module-card"><span class="module-abbr">Fr</span><span class="module-name">FlexRay Driver</span></a>
-      <a href="eth.html" class="module-card"><span class="module-abbr">Eth</span><span class="module-name">Ethernet Driver</span></a>
-      <a href="spi.html" class="module-card"><span class="module-abbr">Spi</span><span class="module-name">SPI Handler/Driver</span></a>
-      <a href="adc.html" class="module-card"><span class="module-abbr">Adc</span><span class="module-name">ADC Driver</span></a>
-      <a href="dio.html" class="module-card"><span class="module-abbr">Dio</span><span class="module-name">Digital I/O Driver</span></a>
-      <a href="pwm.html" class="module-card"><span class="module-abbr">Pwm</span><span class="module-name">PWM Driver</span></a>
-      <a href="icu.html" class="module-card"><span class="module-abbr">Icu</span><span class="module-name">Input Capture Unit</span></a>
-      <a href="gpt.html" class="module-card"><span class="module-abbr">Gpt</span><span class="module-name">General Purpose Timer</span></a>
-      <a href="port.html" class="module-card"><span class="module-abbr">Port</span><span class="module-name">Port Driver</span></a>
-      <a href="fls.html" class="module-card"><span class="module-abbr">Fls</span><span class="module-name">Flash Driver</span></a>
-      <a href="wdg.html" class="module-card"><span class="module-abbr">Wdg</span><span class="module-name">Watchdog Driver</span></a>
-      <a href="mcu.html" class="module-card"><span class="module-abbr">Mcu</span><span class="module-name">MCU Driver</span></a>
+      <a href="can.html" class="module-card"><span class="module-abbr">Can</span><span class="module-name"><span class="i18n-fr">Driver CAN</span><span class="i18n-en">CAN Driver</span></span></a>
+      <a href="lin.html" class="module-card"><span class="module-abbr">Lin</span><span class="module-name"><span class="i18n-fr">Driver LIN</span><span class="i18n-en">LIN Driver</span></span></a>
+      <a href="fr.html" class="module-card"><span class="module-abbr">Fr</span><span class="module-name"><span class="i18n-fr">Driver FlexRay</span><span class="i18n-en">FlexRay Driver</span></span></a>
+      <a href="eth.html" class="module-card"><span class="module-abbr">Eth</span><span class="module-name"><span class="i18n-fr">Driver Ethernet</span><span class="i18n-en">Ethernet Driver</span></span></a>
+      <a href="spi.html" class="module-card"><span class="module-abbr">Spi</span><span class="module-name"><span class="i18n-fr">Handler/Driver SPI</span><span class="i18n-en">SPI Handler/Driver</span></span></a>
+      <a href="adc.html" class="module-card"><span class="module-abbr">Adc</span><span class="module-name"><span class="i18n-fr">Driver ADC</span><span class="i18n-en">ADC Driver</span></span></a>
+      <a href="dio.html" class="module-card"><span class="module-abbr">Dio</span><span class="module-name"><span class="i18n-fr">Driver E/S numériques</span><span class="i18n-en">Digital I/O Driver</span></span></a>
+      <a href="pwm.html" class="module-card"><span class="module-abbr">Pwm</span><span class="module-name"><span class="i18n-fr">Driver PWM</span><span class="i18n-en">PWM Driver</span></span></a>
+      <a href="icu.html" class="module-card"><span class="module-abbr">Icu</span><span class="module-name"><span class="i18n-fr">Unité de capture d’entrée</span><span class="i18n-en">Input Capture Unit</span></span></a>
+      <a href="gpt.html" class="module-card"><span class="module-abbr">Gpt</span><span class="module-name"><span class="i18n-fr">Timer usage général</span><span class="i18n-en">General Purpose Timer</span></span></a>
+      <a href="port.html" class="module-card"><span class="module-abbr">Port</span><span class="module-name"><span class="i18n-fr">Driver Port</span><span class="i18n-en">Port Driver</span></span></a>
+      <a href="fls.html" class="module-card"><span class="module-abbr">Fls</span><span class="module-name"><span class="i18n-fr">Driver Flash</span><span class="i18n-en">Flash Driver</span></span></a>
+      <a href="wdg.html" class="module-card"><span class="module-abbr">Wdg</span><span class="module-name"><span class="i18n-fr">Driver Watchdog</span><span class="i18n-en">Watchdog Driver</span></span></a>
+      <a href="mcu.html" class="module-card"><span class="module-abbr">Mcu</span><span class="module-name"><span class="i18n-fr">Driver MCU</span><span class="i18n-en">MCU Driver</span></span></a>
     </div>
   </section>
 
@@ -113,10 +129,10 @@
 <!-- ====== Footer ====== -->
 <footer class="site-footer">
   <div class="container">
-    <p>&copy; 2026 autosar-fullstack.dev — Yann Nicaise. Built with pure HTML, CSS &amp; JS.</p>
+    <p>&copy; 2026 autosar-fullstack.dev — Yann Nicaise. <span class="i18n-fr">Conçu en pur HTML, CSS &amp; JS.</span><span class="i18n-en">Built with pure HTML, CSS &amp; JS.</span></p>
   </div>
 </footer>
 
-<script src="../js/main.js"></script>
+<script src="../assets/js/main.js"></script>
 </body>
 </html>

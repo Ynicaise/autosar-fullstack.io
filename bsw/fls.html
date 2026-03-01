@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Fls | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Fls Driver — MCAL Flash Memory">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Fls — Driver Flash</span><span class="i18n-en">Fls — Flash Driver</span></h1>
+    <p><span class="i18n-fr">Driver MCAL de la mémoire Flash interne : effacement de secteurs, programmation (écriture) et lecture de données. Opérations asynchrones utilisées par le Fee pour le stockage NV.</span><span class="i18n-en">Internal Flash memory MCAL driver: sector erase, programming (write) and data read. Asynchronous operations used by Fee for NV storage.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html">Can</a></li><li><a href="lin.html">Lin</a></li><li><a href="fr.html">Fr</a></li><li><a href="eth.html">Eth</a></li><li><a href="spi.html">Spi</a></li><li><a href="adc.html">Adc</a></li><li><a href="dio.html">Dio</a></li><li><a href="pwm.html">Pwm</a></li><li><a href="icu.html">Icu</a></li><li><a href="gpt.html">Gpt</a></li><li><a href="port.html">Port</a></li>
+        <li><a href="fls.html" class="active">Fls</a></li>
+        <li><a href="wdg.html">Wdg</a></li><li><a href="mcu.html">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le driver <strong>Fls</strong> gère les opérations sur la Flash interne du MCU : <code>Fls_Erase()</code> (effacement de secteur), <code>Fls_Write()</code> (programmation page par page) et <code>Fls_Read()</code>. Toutes les opérations sont <strong>asynchrones</strong> — la progression se fait dans <code>Fls_MainFunction()</code> pour ne pas bloquer l'application pendant l'effacement (qui peut prendre ~100 ms par secteur).</span><span class="i18n-en">The <strong>Fls</strong> driver manages operations on the MCU's internal Flash: <code>Fls_Erase()</code> (sector erase), <code>Fls_Write()</code> (page-by-page programming) and <code>Fls_Read()</code>. All operations are <strong>asynchronous</strong> — progress happens in <code>Fls_MainFunction()</code> to avoid blocking the application during erase (which can take ~100 ms per sector).</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-init">Sector</span> <span class="i18n-fr">Fls Sector &amp; Erase/Write</span><span class="i18n-en">Fls Sector &amp; Erase/Write</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;FLS-CONFIGURATION&gt;
+  &lt;SHORT-NAME&gt;FlsCfg&lt;/SHORT-NAME&gt;
+  &lt;FLS-BASE-ADDRESS&gt;
+    0x080E0000
+  &lt;/FLS-BASE-ADDRESS&gt;
+  &lt;FLS-TOTAL-SIZE&gt;
+    0x20000  &lt;!-- 128 KB --&gt;
+  &lt;/FLS-TOTAL-SIZE&gt;
+  &lt;FLS-SECTOR-SIZE&gt;
+    0x4000   &lt;!-- 16 KB --&gt;
+  &lt;/FLS-SECTOR-SIZE&gt;
+  &lt;FLS-PAGE-SIZE&gt;
+    8  &lt;!-- bytes, min write unit --&gt;
+  &lt;/FLS-PAGE-SIZE&gt;
+  &lt;FLS-MAX-WRITE-NORMAL-MODE&gt;
+    64  &lt;!-- bytes per MainFunction --&gt;
+  &lt;/FLS-MAX-WRITE-NORMAL-MODE&gt;
+  &lt;FLS-MAX-WRITE-FAST-MODE&gt;
+    256
+  &lt;/FLS-MAX-WRITE-FAST-MODE&gt;
+  &lt;FLS-JOB-END-NOTIFICATION&gt;
+    Fee_JobEndNotification
+  &lt;/FLS-JOB-END-NOTIFICATION&gt;
+  &lt;FLS-JOB-ERROR-NOTIFICATION&gt;
+    Fee_JobErrorNotification
+  &lt;/FLS-JOB-ERROR-NOTIFICATION&gt;
+&lt;/FLS-CONFIGURATION&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Fls Erase &amp; Write</span>
+<pre><code>#include "Fls.h"
+
+/* Called by Fee for NV storage */
+
+/* Erase a 16 KB sector */
+Std_ReturnType FlsErase(void)
+{
+  return Fls_Erase(
+    0x080E0000U,  /* address */
+    0x4000U       /* 16 KB */
+  );
+  /* Fls_MainFunction() processes
+   * erase in background
+   * (~100 ms for 16 KB sector) */
+}
+
+/* Write 64 bytes to Flash */
+Std_ReturnType FlsWrite(void)
+{
+  return Fls_Write(
+    0x080E0000U,  /* address */
+    srcBuffer,    /* RAM source */
+    64U           /* length */
+  );
+  /* Fls_MainFunction() programs
+   * FLS_MAX_WRITE bytes/call */
+}
+
+/* Poll or callback */
+MemIf_JobResultType res =
+  Fls_GetJobResult();
+/* MEMIF_JOB_OK
+ * MEMIF_JOB_PENDING
+ * MEMIF_JOB_FAILED */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Ajustez <code>FLS-MAX-WRITE-NORMAL-MODE</code> pour limiter le temps passé dans <code>Fls_MainFunction()</code> — un trop gros chunk bloque la tâche trop longtemps. Sur certains MCU, l'exécution de code depuis la Flash est impossible pendant l'effacement (read-while-write constraints) : exécutez <code>Fls_MainFunction()</code> depuis la RAM.</span><span class="i18n-en"><strong>Tip:</strong> Adjust <code>FLS-MAX-WRITE-NORMAL-MODE</code> to limit time spent in <code>Fls_MainFunction()</code> — too large a chunk blocks the task too long. On some MCUs, code execution from Flash is impossible during erase (read-while-write constraints): run <code>Fls_MainFunction()</code> from RAM.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="port.html" class="prev">← Port</a>
+        <a href="wdg.html" class="next">Wdg →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer"><div class="container"><p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p></div></footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

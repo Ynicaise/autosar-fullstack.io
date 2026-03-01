@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASW — CDD &amp; Runnables | autosar-fullstack.dev</title>
+  <meta name="description" content="Complex Device Drivers AUTOSAR et conception des Runnables — architecture CDD, événements RTE, mapping runnable-to-task.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="introduction.html" class="active">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="introduction.html">Introduction</a></li>
+          <li><a href="swc.html">SWC</a></li>
+          <li><a href="cdd.html" class="active">CDD</a></li>
+          <li><a href="arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="../bsw/com.html">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span>
+      <span class="lang-sep"></span>
+      <span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="module-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a> / <a href="introduction.html">ASW</a> / <strong>CDD &amp; Runnables</strong></div>
+    <h1><span class="i18n-fr">CDD &amp; Conception des <span>Runnables</span></span><span class="i18n-en">CDD &amp; <span>Runnable</span> Design</span></h1>
+    <div class="module-meta">
+      <span class="module-meta-item">Complex Device Drivers</span>
+      <span class="module-meta-item">Runnable Entities</span>
+      <span class="module-meta-item"><span class="i18n-fr">Événements RTE</span><span class="i18n-en">RTE Events</span></span>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar" style="max-width:none;padding:0;">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Pages ASW</span><span class="i18n-en">ASW Pages</span></div>
+      <ul class="sidebar-links">
+        <li><a href="introduction.html">Introduction</a></li>
+        <li><a href="swc.html">SWC</a></li>
+        <li><a href="cdd.html" class="active">CDD</a></li>
+        <li><a href="arxml-xdm.html">ARXML / XDM</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#cdd"><span class="i18n-fr">Développement CDD</span><span class="i18n-en">CDD Development</span></a></li>
+        <li><a href="#cdd-when"><span class="i18n-fr">Quand utiliser un CDD</span><span class="i18n-en">When to Use</span></a></li>
+        <li><a href="#cdd-arch"><span class="i18n-fr">Pattern d'architecture</span><span class="i18n-en">Architecture Pattern</span></a></li>
+        <li><a href="#cdd-examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></a></li>
+        <li><a href="#runnables"><span class="i18n-fr">Conception Runnable</span><span class="i18n-en">Runnable Design</span></a></li>
+        <li><a href="#events"><span class="i18n-fr">Événements RTE</span><span class="i18n-en">RTE Events</span></a></li>
+        <li><a href="#task-mapping"><span class="i18n-fr">Mapping Tâches</span><span class="i18n-en">Task Mapping</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+
+      <h2 id="cdd"><span class="i18n-fr">Développement CDD</span><span class="i18n-en">CDD Development</span></h2>
+      <p><span class="i18n-fr">Un <strong>Complex Device Driver (CDD)</strong> fournit une interface SWC standardisée tout en ayant un accès direct aux registres hardware du microcontrôleur sans passer par la couche d'abstraction MCAL.</span><span class="i18n-en">A <strong>Complex Device Driver (CDD)</strong> provides a standardized SWC interface while having direct access to microcontroller hardware registers without going through the MCAL abstraction layer.</span></p>
+
+      <h3 id="cdd-when"><span class="i18n-fr">Quand utiliser un CDD</span><span class="i18n-en">When to Use a CDD</span></h3>
+      <ul>
+        <li><span class="i18n-fr">Périphériques hardware non couverts par les drivers MCAL standards</span><span class="i18n-en">Hardware peripherals not covered by standard MCAL drivers</span></li>
+        <li><span class="i18n-fr">Opérations critiques en temps nécessitant un accès direct aux registres</span><span class="i18n-en">Time-critical operations requiring direct register access</span></li>
+        <li><span class="i18n-fr">Protocoles de communication spécifiques non gérés par les piles standards</span><span class="i18n-en">Custom communication protocols not handled by standard stacks</span></li>
+        <li><span class="i18n-fr">Intégration de drivers legacy dans une architecture AUTOSAR</span><span class="i18n-en">Legacy driver integration into an AUTOSAR architecture</span></li>
+      </ul>
+
+      <h3 id="cdd-arch"><span class="i18n-fr">Pattern d'architecture CDD</span><span class="i18n-en">CDD Architecture Pattern</span></h3>
+      <div class="arch-diagram" style="max-width:500px;">
+        <div class="arch-layer asw">
+          <div class="arch-label" style="color:var(--green)">Application SWC</div>
+          <div class="arch-detail"><span class="i18n-fr">Utilise le CDD via les ports RTE</span><span class="i18n-en">Uses CDD via RTE ports</span></div>
+        </div>
+        <div class="arch-connector">&#9660;</div>
+        <div class="arch-layer rte">
+          <div class="arch-label" style="color:var(--purple)">RTE</div>
+          <div class="arch-detail"><span class="i18n-fr">Connexions de ports générées</span><span class="i18n-en">Generated port connections</span></div>
+        </div>
+        <div class="arch-connector">&#9660;</div>
+        <div class="arch-layer mcal" style="background:rgba(188,140,255,.08); border-color:rgba(188,140,255,.3);">
+          <div class="arch-label" style="color:var(--purple)">CDD SWC</div>
+          <div class="arch-detail"><span class="i18n-fr">Accès direct registres + interface RTE</span><span class="i18n-en">Direct register access + RTE interface</span></div>
+        </div>
+        <div class="arch-connector">&#9660;</div>
+        <div class="arch-layer hw">
+          <div class="arch-label"><span class="i18n-fr">Registres Hardware</span><span class="i18n-en">Hardware Registers</span></div>
+          <div class="arch-detail"><span class="i18n-fr">E/S mappées en mémoire</span><span class="i18n-en">Direct memory-mapped I/O</span></div>
+        </div>
+      </div>
+
+      <div class="info-box warning">
+        <span class="i18n-fr"><strong>Attention :</strong> Les CDD contournent les couches d'abstraction AUTOSAR. Ils réduisent la portabilité et augmentent l'effort nécessaire lors de la migration d'ECU. À utiliser uniquement lorsque les drivers MCAL standards sont insuffisants.</span><span class="i18n-en"><strong>Warning:</strong> CDDs bypass the AUTOSAR abstraction layers. They reduce portability and increase the effort needed during ECU migration. Use only when standard MCAL drivers are insufficient.</span>
+      </div>
+
+      <h2 id="cdd-examples"><span class="i18n-fr">Exemples CDD — ARXML &amp; Code C</span><span class="i18n-en">CDD Examples — ARXML &amp; C Code</span></h2>
+      <p><span class="i18n-fr">Un CDD est déclaré comme un SWC standard en ARXML mais son implémentation C accède directement aux registres hardware.</span><span class="i18n-en">A CDD is declared as a standard SWC in ARXML but its C implementation directly accesses hardware registers.</span></p>
+
+      <!-- Example 1: CDD SWC Type + Direct Register Access -->
+      <div class="code-split-title"><span class="badge badge-runnable">CDD</span> <span class="i18n-fr">Déclaration CDD avec accès registre direct</span><span class="i18n-en">CDD Declaration with Direct Register Access</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Le type SWC CDD est déclaré en ARXML comme tout autre composant, mais le code C implémente un accès direct aux registres du périphérique (ici un capteur SPI custom).</span><span class="i18n-en">The CDD SWC type is declared in ARXML like any other component, but the C code implements direct access to the peripheral registers (here a custom SPI sensor).</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;COMPLEX-DEVICE-DRIVER-SW-
+  COMPONENT-TYPE&gt;
+  &lt;SHORT-NAME&gt;CDD_CustomSensor&lt;/SHORT-NAME&gt;
+  &lt;PORTS&gt;
+    &lt;P-PORT-PROTOTYPE&gt;
+      &lt;SHORT-NAME&gt;PPort_SensorData&lt;/SHORT-NAME&gt;
+      &lt;PROVIDED-INTERFACE-TREF DEST=
+        "SENDER-RECEIVER-INTERFACE"&gt;
+        /Interfaces/If_SensorData
+      &lt;/PROVIDED-INTERFACE-TREF&gt;
+    &lt;/P-PORT-PROTOTYPE&gt;
+  &lt;/PORTS&gt;
+  &lt;INTERNAL-BEHAVIORS&gt;
+    &lt;SWC-INTERNAL-BEHAVIOR&gt;
+      &lt;SHORT-NAME&gt;CDD_Sensor_IB&lt;/SHORT-NAME&gt;
+      &lt;RUNNABLES&gt;
+        &lt;RUNNABLE-ENTITY&gt;
+          &lt;SHORT-NAME&gt;RE_ReadSensor&lt;/SHORT-NAME&gt;
+          &lt;SYMBOL&gt;CDD_ReadSensor&lt;/SYMBOL&gt;
+        &lt;/RUNNABLE-ENTITY&gt;
+      &lt;/RUNNABLES&gt;
+      &lt;EVENTS&gt;
+        &lt;TIMING-EVENT&gt;
+          &lt;SHORT-NAME&gt;TE_5ms&lt;/SHORT-NAME&gt;
+          &lt;START-ON-EVENT-REF DEST=
+            "RUNNABLE-ENTITY"&gt;
+            RE_ReadSensor
+          &lt;/START-ON-EVENT-REF&gt;
+          &lt;PERIOD&gt;0.005&lt;/PERIOD&gt;
+        &lt;/TIMING-EVENT&gt;
+      &lt;/EVENTS&gt;
+    &lt;/SWC-INTERNAL-BEHAVIOR&gt;
+  &lt;/INTERNAL-BEHAVIORS&gt;
+&lt;/COMPLEX-DEVICE-DRIVER-SW-
+  COMPONENT-TYPE&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — CDD_CustomSensor.c</span>
+<pre><code>#include "Rte_CDD_CustomSensor.h"
+
+/* Hardware register addresses */
+#define SPI2_BASE   0x40003800UL
+#define SPI_DR      (*(volatile uint16*)\
+                     (SPI2_BASE + 0x0CU))
+#define SPI_SR      (*(volatile uint16*)\
+                     (SPI2_BASE + 0x08U))
+#define SPI_SR_RXNE (1U &lt;&lt; 0U)
+#define SPI_SR_TXE  (1U &lt;&lt; 1U)
+
+/* CDD Runnable — direct register I/O */
+VOID CDD_ReadSensor(VOID)
+{
+  uint16 rawData;
+
+  /* Wait for TX buffer empty */
+  while (!(SPI_SR &amp; SPI_SR_TXE)) {}
+
+  /* Send read command */
+  SPI_DR = 0x8000U; /* Read cmd */
+
+  /* Wait for data reception */
+  while (!(SPI_SR &amp; SPI_SR_RXNE)) {}
+
+  rawData = SPI_DR;
+
+  /* Convert &amp; provide via RTE port */
+  float32 voltage =
+    (float32)rawData * 3.3f / 4096.0f;
+
+  (void)Rte_Write_PPort_SensorData(
+    voltage
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Example 2: CDD Init + Interrupt Setup -->
+      <div class="code-split-title"><span class="badge badge-init">Init</span> <span class="i18n-fr">Initialisation CDD avec configuration d'interruption</span><span class="i18n-en">CDD Init with Interrupt Configuration</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">La runnable d'init du CDD configure directement les registres hardware — interruptions, DMA, horloges périphériques — sans passer par les APIs MCAL.</span><span class="i18n-en">The CDD init runnable directly configures hardware registers — interrupts, DMA, peripheral clocks — without going through MCAL APIs.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;RUNNABLE-ENTITY&gt;
+  &lt;SHORT-NAME&gt;RE_CDD_Init&lt;/SHORT-NAME&gt;
+  &lt;CAN-BE-INVOKED-CONCURRENTLY&gt;
+    false
+  &lt;/CAN-BE-INVOKED-CONCURRENTLY&gt;
+  &lt;SYMBOL&gt;CDD_Sensor_Init&lt;/SYMBOL&gt;
+&lt;/RUNNABLE-ENTITY&gt;
+
+&lt;INIT-EVENT&gt;
+  &lt;SHORT-NAME&gt;IE_CDD_Init&lt;/SHORT-NAME&gt;
+  &lt;START-ON-EVENT-REF DEST=
+    "RUNNABLE-ENTITY"&gt;
+    RE_CDD_Init
+  &lt;/START-ON-EVENT-REF&gt;
+&lt;/INIT-EVENT&gt;
+
+&lt;!-- Exclusive area for ISR safety --&gt;
+&lt;EXCLUSIVE-AREA&gt;
+  &lt;SHORT-NAME&gt;EA_SpiAccess&lt;/SHORT-NAME&gt;
+&lt;/EXCLUSIVE-AREA&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — CDD_CustomSensor.c</span>
+<pre><code>#define RCC_APB1ENR (*(volatile uint32*)\
+                     (0x40023840UL))
+#define SPI2_CR1    (*(volatile uint16*)\
+                     (SPI2_BASE + 0x00U))
+#define SPI2_CR2    (*(volatile uint16*)\
+                     (SPI2_BASE + 0x04U))
+#define NVIC_ISER1  (*(volatile uint32*)\
+                     (0xE000E104UL))
+
+VOID CDD_Sensor_Init(VOID)
+{
+  /* 1. Enable SPI2 peripheral clock */
+  RCC_APB1ENR |= (1U &lt;&lt; 14U);
+
+  /* 2. Configure SPI: Master, 8-bit,
+   *    CPOL=0, CPHA=0, /16 prescaler */
+  SPI2_CR1 = (1U &lt;&lt; 2U)   /* MSTR */
+           | (3U &lt;&lt; 3U);  /* BR /16 */
+
+  /* 3. Enable RX interrupt */
+  SPI2_CR2 = (1U &lt;&lt; 6U); /* RXNEIE */
+
+  /* 4. Enable NVIC IRQ #36 (SPI2) */
+  NVIC_ISER1 = (1U &lt;&lt; 4U);
+
+  /* 5. Enable SPI */
+  SPI2_CR1 |= (1U &lt;&lt; 6U); /* SPE */
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="info-box success mt-4">
+        <span class="i18n-fr"><strong>CDD vs MCAL :</strong> Contrairement aux drivers MCAL qui exposent des APIs standardisées (<code>Spi_AsyncTransmit</code>), un CDD manipule directement les registres. L'interface AUTOSAR est préservée côté port (S/R, C/S) mais l'implémentation est <strong>spécifique au hardware</strong>.</span><span class="i18n-en"><strong>CDD vs MCAL:</strong> Unlike MCAL drivers that expose standardized APIs (<code>Spi_AsyncTransmit</code>), a CDD directly manipulates registers. The AUTOSAR interface is preserved on the port side (S/R, C/S) but the implementation is <strong>hardware-specific</strong>.</span>
+      </div>
+
+      <h2 id="runnables"><span class="i18n-fr">Conception des Runnables</span><span class="i18n-en">Runnable Design</span></h2>
+      <p><span class="i18n-fr">Une <strong>Runnable Entity</strong> est la plus petite unité de code ordonnançable dans un SWC AUTOSAR. Chaque runnable est déclenchée par un <strong>événement RTE</strong> et mappée sur une <strong>tâche</strong> OS.</span><span class="i18n-en">A <strong>Runnable Entity</strong> is the smallest schedulable unit of code in an AUTOSAR SWC. Each runnable is triggered by an <strong>RTE Event</strong> and mapped to an OS <strong>Task</strong>.</span></p>
+
+      <h3 id="events"><span class="i18n-fr">Types d'événements RTE</span><span class="i18n-en">RTE Event Types</span></h3>
+      <table>
+        <thead>
+          <tr><th><span class="i18n-fr">Type d'événement</span><span class="i18n-en">Event Type</span></th><th><span class="i18n-fr">Déclencheur</span><span class="i18n-en">Trigger</span></th><th><span class="i18n-fr">Usage typique</span><span class="i18n-en">Typical Use</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>TimingEvent</code></td><td><span class="i18n-fr">Timer périodique (ex. 10ms)</span><span class="i18n-en">Periodic timer (e.g., 10ms)</span></td><td><span class="i18n-fr">Boucle de contrôle cyclique</span><span class="i18n-en">Cyclic control loop</span></td></tr>
+          <tr><td><code>DataReceivedEvent</code></td><td><span class="i18n-fr">Nouvelle donnée sur un RPort</span><span class="i18n-en">New data on an RPort</span></td><td><span class="i18n-fr">Traitement événementiel</span><span class="i18n-en">Event-driven processing</span></td></tr>
+          <tr><td><code>InitEvent</code></td><td><span class="i18n-fr">Initialisation SWC</span><span class="i18n-en">SWC initialization</span></td><td><span class="i18n-fr">Init variables, setup ressources</span><span class="i18n-en">Variable init, resource setup</span></td></tr>
+          <tr><td><code>ModeSwitchEvent</code></td><td><span class="i18n-fr">Entrée/sortie de mode</span><span class="i18n-en">Mode entry/exit</span></td><td><span class="i18n-fr">Comportement dépendant de l'état</span><span class="i18n-en">State-dependent behavior</span></td></tr>
+          <tr><td><code>OperationInvokedEvent</code></td><td><span class="i18n-fr">Appel d'opération C/S</span><span class="i18n-en">C/S operation call</span></td><td><span class="i18n-fr">Handler côté serveur</span><span class="i18n-en">Server-side handler</span></td></tr>
+          <tr><td><code>DataWriteCompleteEvent</code></td><td><span class="i18n-fr">Écriture explicite terminée</span><span class="i18n-en">Explicit write complete</span></td><td><span class="i18n-fr">Gestion de confirmation</span><span class="i18n-en">Confirmation handling</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="task-mapping"><span class="i18n-fr">Mapping Runnable-to-Task</span><span class="i18n-en">Runnable-to-Task Mapping</span></h3>
+      <p><span class="i18n-fr">Chaque runnable doit être mappée sur une tâche OS. La stratégie de mapping affecte le comportement temps réel :</span><span class="i18n-en">Each runnable must be mapped to an OS task. The mapping strategy affects real-time behavior:</span></p>
+      <ul>
+        <li><span class="i18n-fr"><strong>Une runnable par tâche</strong> — Isolation maximale, overhead le plus élevé</span><span class="i18n-en"><strong>One runnable per task</strong> — Maximum isolation, highest overhead</span></li>
+        <li><span class="i18n-fr"><strong>Plusieurs runnables par tâche</strong> — Contexte de tâche partagé, exécution séquentielle au sein de la tâche</span><span class="i18n-en"><strong>Multiple runnables per task</strong> — Shared task context, sequential execution within task</span></li>
+        <li><span class="i18n-fr"><strong>Runnables Catégorie 1 vs Catégorie 2</strong> — Les runnables Cat1 peuvent préempter les Cat2 et vice versa selon la priorité de tâche</span><span class="i18n-en"><strong>Category 1 vs Category 2 runnables</strong> — Cat1 runnables can preempt Cat2 and vice versa depending on task priority</span></li>
+      </ul>
+
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Regroupez les runnables de même période dans la même tâche pour minimiser l'overhead de changement de contexte tout en maintenant un ordonnancement déterministe.</span><span class="i18n-en"><strong>Tip:</strong> Group runnables with the same period into the same task to minimize context switch overhead while maintaining deterministic scheduling.</span>
+      </div>
+
+      <div class="mt-4" style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="swc.html" class="btn btn-outline"><span class="i18n-fr">← SWC</span><span class="i18n-en">← SWC</span></a>
+        <a href="arxml-xdm.html" class="btn btn-primary"><span class="i18n-fr">Suivant : ARXML / XDM →</span><span class="i18n-en">Next: ARXML / XDM →</span></a>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2026 autosar-fullstack.dev — Yann Nicaise. <span class="i18n-fr">Conçu en pur HTML, CSS &amp; JS.</span><span class="i18n-en">Built with pure HTML, CSS &amp; JS.</span></p>
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Fr | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Fr Driver — MCAL FlexRay Controller">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Fr — Driver FlexRay</span><span class="i18n-en">Fr — FlexRay Driver</span></h1>
+    <p><span class="i18n-fr">Driver MCAL du contrôleur FlexRay : synchronisation du cycle TDMA, accès aux message buffers et gestion du protocole de démarrage (coldstart).</span><span class="i18n-en">FlexRay controller MCAL driver: TDMA cycle synchronization, message buffer access and startup protocol management (coldstart).</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html">Can</a></li>
+        <li><a href="lin.html">Lin</a></li>
+        <li><a href="fr.html" class="active">Fr</a></li>
+        <li><a href="eth.html">Eth</a></li>
+        <li><a href="spi.html">Spi</a></li>
+        <li><a href="adc.html">Adc</a></li>
+        <li><a href="dio.html">Dio</a></li>
+        <li><a href="pwm.html">Pwm</a></li>
+        <li><a href="icu.html">Icu</a></li>
+        <li><a href="gpt.html">Gpt</a></li>
+        <li><a href="port.html">Port</a></li>
+        <li><a href="fls.html">Fls</a></li>
+        <li><a href="wdg.html">Wdg</a></li>
+        <li><a href="mcu.html">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le driver <strong>Fr</strong> pilote le contrôleur FlexRay du MCU. Il gère la synchronisation de l'horloge FlexRay (macrotick / microtick), le protocole de démarrage (coldstart node / non-coldstart), l'accès aux message buffers (lecture RX, écriture TX) et le monitoring du Protocol Operation Control (POC) state.</span><span class="i18n-en">The <strong>Fr</strong> driver controls the MCU's FlexRay controller. It manages FlexRay clock synchronization (macrotick / microtick), startup protocol (coldstart node / non-coldstart), message buffer access (RX read, TX write) and Protocol Operation Control (POC) state monitoring.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-cs">Protocol</span> <span class="i18n-fr">Fr Controller &amp; démarrage</span><span class="i18n-en">Fr Controller &amp; Startup</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;FR-CONTROLLER-CONFIGURATION&gt;
+  &lt;SHORT-NAME&gt;
+    FrController_0
+  &lt;/SHORT-NAME&gt;
+  &lt;FR-CLUSTER-REF&gt;
+    FrCluster_Chassis
+  &lt;/FR-CLUSTER-REF&gt;
+  &lt;FR-COLDSTART-NODE&gt;
+    true
+  &lt;/FR-COLDSTART-NODE&gt;
+  &lt;FR-WAKEUP-CHANNEL&gt;
+    CHANNEL_A
+  &lt;/FR-WAKEUP-CHANNEL&gt;
+  &lt;PDUR-TRIGGER-TRANSMIT-ENABLED&gt;
+    true
+  &lt;/PDUR-TRIGGER-TRANSMIT-ENABLED&gt;
+&lt;/FR-CONTROLLER-CONFIGURATION&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Fr Startup Sequence</span>
+<pre><code>#include "Fr.h"
+
+/* FlexRay startup sequence */
+void Fr_StartCommunication(void)
+{
+  Fr_POCStatusType pocStatus;
+
+  /* 1. Wakeup on Channel A */
+  Fr_SendWUP(FR_CTRL_0);
+
+  /* 2. Wait wakeup complete */
+  do {
+    Fr_GetPOCStatus(
+      FR_CTRL_0, &amp;pocStatus);
+  } while (pocStatus.State
+    != FR_POCSTATE_READY);
+
+  /* 3. Allow coldstart */
+  Fr_AllowColdstart(FR_CTRL_0);
+
+  /* 4. Start communication */
+  Fr_StartCommunication(FR_CTRL_0);
+
+  /* POC states:
+   * CONFIG → READY → WAKEUP
+   * → STARTUP → NORMAL_ACTIVE
+   *
+   * Coldstart node initiates
+   * synchronization, others
+   * join the existing cycle. */
+}</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Au moins 2 coldstart nodes sont requis pour démarrer un cluster FlexRay. Surveillez le POC state <code>NORMAL_PASSIVE</code> qui indique une perte partielle de synchronisation. Les corrections d'horloge (rate/offset) doivent rester dans les limites définies par le cluster.</span><span class="i18n-en"><strong>Tip:</strong> At least 2 coldstart nodes are required to start a FlexRay cluster. Monitor the <code>NORMAL_PASSIVE</code> POC state indicating partial sync loss. Clock corrections (rate/offset) must stay within cluster-defined limits.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="lin.html" class="prev">← Lin</a>
+        <a href="eth.html" class="next">Eth →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASW — Développement SWC | autosar-fullstack.dev</title>
+  <meta name="description" content="Développement de Software Components AUTOSAR — types de SWC, structure interne, ports et interfaces.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="introduction.html" class="active">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="introduction.html">Introduction</a></li>
+          <li><a href="swc.html" class="active">SWC</a></li>
+          <li><a href="cdd.html">CDD</a></li>
+          <li><a href="arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="../bsw/com.html">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span>
+      <span class="lang-sep"></span>
+      <span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="module-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a> / <a href="introduction.html">ASW</a> / <strong>SWC</strong></div>
+    <h1><span class="i18n-fr">Développement <span>SWC</span></span><span class="i18n-en"><span>SWC</span> Development</span></h1>
+    <div class="module-meta">
+      <span class="module-meta-item"><span class="i18n-fr">Types de SWC</span><span class="i18n-en">SWC Types</span></span>
+      <span class="module-meta-item"><span class="i18n-fr">Structure interne</span><span class="i18n-en">Internal Structure</span></span>
+      <span class="module-meta-item"><span class="i18n-fr">Ports &amp; Interfaces</span><span class="i18n-en">Ports &amp; Interfaces</span></span>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar" style="max-width:none;padding:0;">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Pages ASW</span><span class="i18n-en">ASW Pages</span></div>
+      <ul class="sidebar-links">
+        <li><a href="introduction.html">Introduction</a></li>
+        <li><a href="swc.html" class="active">SWC</a></li>
+        <li><a href="cdd.html">CDD</a></li>
+        <li><a href="arxml-xdm.html">ARXML / XDM</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#types"><span class="i18n-fr">Types de SWC</span><span class="i18n-en">SWC Types</span></a></li>
+        <li><a href="#internal"><span class="i18n-fr">Structure interne</span><span class="i18n-en">Internal Structure</span></a></li>
+        <li><a href="#ports"><span class="i18n-fr">Interfaces de ports</span><span class="i18n-en">Port Interfaces</span></a></li>
+        <li><a href="#examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></a></li>
+        <li><a href="#best-practices"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Un <strong>Software Component (SWC)</strong> AUTOSAR est le bloc de construction fondamental de la couche applicative. Chaque SWC encapsule une fonctionnalité bien définie et communique exclusivement via des <strong>ports</strong> définis en ARXML.</span><span class="i18n-en">An AUTOSAR <strong>Software Component (SWC)</strong> is the fundamental building block of the application layer. Each SWC encapsulates a well-defined piece of functionality and communicates exclusively through <strong>ports</strong> defined in ARXML.</span></p>
+
+      <h2 id="types"><span class="i18n-fr">Types de SWC</span><span class="i18n-en">SWC Types</span></h2>
+      <table>
+        <thead>
+          <tr><th>Type</th><th>Description</th><th><span class="i18n-fr">Cas d'usage</span><span class="i18n-en">Use Case</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>ApplicationSwComponentType</code></td><td><span class="i18n-fr">Composant applicatif standard</span><span class="i18n-en">Standard application component</span></td><td><span class="i18n-fr">Logique de contrôle, machines à états</span><span class="i18n-en">Control logic, state machines</span></td></tr>
+          <tr><td><code>SensorActuatorSwComponentType</code></td><td><span class="i18n-fr">Interface avec les E/S hardware</span><span class="i18n-en">Interfaces with hardware I/O</span></td><td><span class="i18n-fr">Lecture capteur, commande actionneur</span><span class="i18n-en">Sensor read, actuator drive</span></td></tr>
+          <tr><td><code>ComplexDeviceDriverSwComponentType</code></td><td><span class="i18n-fr">Accès hardware direct (contourne les APIs MCAL)</span><span class="i18n-en">Direct hardware access (bypasses MCAL APIs)</span></td><td><span class="i18n-fr">Périphériques spécifiques</span><span class="i18n-en">Custom peripherals</span></td></tr>
+          <tr><td><code>ServiceSwComponentType</code></td><td><span class="i18n-fr">Fournit les services BSW au ASW</span><span class="i18n-en">Provides BSW services to ASW</span></td><td><span class="i18n-fr">Proxy diagnostics, proxy NvM</span><span class="i18n-en">Diagnostics proxy, NvM proxy</span></td></tr>
+          <tr><td><code>ParameterSwComponentType</code></td><td><span class="i18n-fr">Conteneur de paramètres de calibration</span><span class="i18n-en">Calibration parameter holder</span></td><td><span class="i18n-fr">Jeux de paramètres ajustables</span><span class="i18n-en">Tunable parameter sets</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="internal"><span class="i18n-fr">Structure interne d'un SWC</span><span class="i18n-en">SWC Internal Structure</span></h2>
+      <p><span class="i18n-fr">Chaque SWC contient :</span><span class="i18n-en">Each SWC contains:</span></p>
+      <ul>
+        <li><span class="i18n-fr"><strong>Ports</strong> — Ports fournis (PPort) et ports requis (RPort) définissant l'interface du composant</span><span class="i18n-en"><strong>Ports</strong> — Provide-ports (PPort) and Require-ports (RPort) defining the component interface</span></li>
+        <li><span class="i18n-fr"><strong>Comportement interne</strong> — Runnables, événements, zones exclusives, mémoire par instance</span><span class="i18n-en"><strong>Internal Behavior</strong> — Runnables, events, exclusive areas, per-instance memory</span></li>
+        <li><span class="i18n-fr"><strong>Implémentation</strong> — Le code C réel implémentant les runnables</span><span class="i18n-en"><strong>Implementation</strong> — The actual C code implementing the runnables</span></li>
+      </ul>
+
+      <div class="arch-diagram" style="max-width:500px;">
+        <div class="arch-layer asw">
+          <div class="arch-label" style="color:var(--green)">SWC</div>
+          <div class="arch-detail"><span class="i18n-fr">Ports | Comportement interne | Implémentation</span><span class="i18n-en">Ports | Internal Behavior | Implementation</span></div>
+        </div>
+        <div class="arch-connector">&#9660;</div>
+        <div class="arch-layer rte">
+          <div class="arch-label" style="color:var(--purple)">RTE</div>
+          <div class="arch-detail">Rte_Read / Rte_Write / Rte_Call</div>
+        </div>
+      </div>
+
+      <h2 id="ports"><span class="i18n-fr">Types d'interfaces de ports</span><span class="i18n-en">Port Interface Types</span></h2>
+      <ul>
+        <li><span class="i18n-fr"><strong>Sender-Receiver (S/R)</strong> — Échange de données asynchrone avec accès implicite ou explicite</span><span class="i18n-en"><strong>Sender-Receiver (S/R)</strong> — Asynchronous data exchange with implicit or explicit access</span></li>
+        <li><span class="i18n-fr"><strong>Client-Server (C/S)</strong> — Pattern d'appel de fonction synchrone ou asynchrone</span><span class="i18n-en"><strong>Client-Server (C/S)</strong> — Synchronous or asynchronous function call pattern</span></li>
+        <li><span class="i18n-fr"><strong>Mode-Switch</strong> — Notifications de mode (ex. : changements de mode EcuM)</span><span class="i18n-en"><strong>Mode-Switch</strong> — Mode notifications (e.g., EcuM mode changes)</span></li>
+        <li><span class="i18n-fr"><strong>Trigger</strong> — Signaux de déclenchement événementiel</span><span class="i18n-en"><strong>Trigger</strong> — Event-driven trigger signals</span></li>
+        <li><span class="i18n-fr"><strong>NvData</strong> — Interface de données non-volatiles pour accès NvM</span><span class="i18n-en"><strong>NvData</strong> — Non-volatile data interface for NvM access</span></li>
+      </ul>
+
+      <table>
+        <thead>
+          <tr><th>Interface</th><th><span class="i18n-fr">Direction</span><span class="i18n-en">Direction</span></th><th>API RTE</th><th><span class="i18n-fr">Exemple</span><span class="i18n-en">Example</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Sender-Receiver</td><td>P → R</td><td><code>Rte_Write / Rte_Read</code></td><td><span class="i18n-fr">Valeur capteur</span><span class="i18n-en">Sensor value</span></td></tr>
+          <tr><td>Client-Server</td><td>C → S</td><td><code>Rte_Call</code></td><td><span class="i18n-fr">Requête diagnostic</span><span class="i18n-en">Diagnostic request</span></td></tr>
+          <tr><td>Mode-Switch</td><td>P → R</td><td><code>Rte_Switch / Rte_Mode</code></td><td><span class="i18n-fr">Changement de mode EcuM</span><span class="i18n-en">EcuM mode change</span></td></tr>
+          <tr><td>NvData</td><td>P → R</td><td><code>Rte_NvRead / Rte_NvWrite</code></td><td><span class="i18n-fr">Bloc NvM</span><span class="i18n-en">NvM block</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples de conception — ARXML &amp; Code C</span><span class="i18n-en">Design Examples — ARXML &amp; C Code</span></h2>
+      <p><span class="i18n-fr">Chaque élément défini en ARXML correspond à du code C généré (ou à implémenter manuellement). Voici les principaux patterns côte à côte.</span><span class="i18n-en">Each element defined in ARXML corresponds to generated C code (or manually implemented code). Here are the main patterns side by side.</span></p>
+
+      <!-- Example 1: Runnable with TimingEvent -->
+      <div class="code-split-title"><span class="badge badge-runnable">Runnable</span> <span class="i18n-fr">Création d'une Runnable avec TimingEvent (10ms)</span><span class="i18n-en">Creating a Runnable with TimingEvent (10ms)</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">La description ARXML de la runnable et de son événement déclencheur, et le squelette C correspondant généré par l'outil RTE.</span><span class="i18n-en">The ARXML description of the runnable and its trigger event, and the corresponding C skeleton generated by the RTE tool.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;SWC-INTERNAL-BEHAVIOR&gt;
+  &lt;SHORT-NAME&gt;MyCtrl_InternalBehavior&lt;/SHORT-NAME&gt;
+  &lt;RUNNABLES&gt;
+    &lt;RUNNABLE-ENTITY&gt;
+      &lt;SHORT-NAME&gt;RE_MyCtrl_10ms&lt;/SHORT-NAME&gt;
+      &lt;CAN-BE-INVOKED-CONCURRENTLY&gt;
+        false
+      &lt;/CAN-BE-INVOKED-CONCURRENTLY&gt;
+      &lt;SYMBOL&gt;RE_MyCtrl_10ms&lt;/SYMBOL&gt;
+    &lt;/RUNNABLE-ENTITY&gt;
+  &lt;/RUNNABLES&gt;
+  &lt;EVENTS&gt;
+    &lt;TIMING-EVENT&gt;
+      &lt;SHORT-NAME&gt;TE_MyCtrl_10ms&lt;/SHORT-NAME&gt;
+      &lt;START-ON-EVENT-REF DEST=
+        "RUNNABLE-ENTITY"&gt;
+        RE_MyCtrl_10ms
+      &lt;/START-ON-EVENT-REF&gt;
+      &lt;PERIOD&gt;0.01&lt;/PERIOD&gt;
+    &lt;/TIMING-EVENT&gt;
+  &lt;/EVENTS&gt;
+&lt;/SWC-INTERNAL-BEHAVIOR&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Rte_MyCtrl.c</span>
+<pre><code>#include "Rte_MyCtrl.h"
+
+/* Runnable: RE_MyCtrl_10ms
+ * Trigger : TimingEvent 10ms
+ * Task    : OsTask_10ms */
+VOID RE_MyCtrl_10ms(VOID)
+{
+  /* Local variables */
+  float32 sensorVal = 0.0f;
+  float32 cmdOutput = 0.0f;
+
+  /* 1. Read sensor input via RTE */
+  (void)Rte_Read_RPort_SensorVal(
+    &amp;sensorVal
+  );
+
+  /* 2. Control algorithm */
+  cmdOutput = PI_Controller(sensorVal);
+
+  /* 3. Write actuator command */
+  (void)Rte_Write_PPort_ActuatorCmd(
+    cmdOutput
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Example 2: Sender-Receiver Port -->
+      <div class="code-split-title"><span class="badge badge-sr">S/R</span> <span class="i18n-fr">Port Sender-Receiver — Définition &amp; Utilisation</span><span class="i18n-en">Sender-Receiver Port — Definition &amp; Usage</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Définition de l'interface S/R et du port dans le SWC, puis lecture explicite côté C.</span><span class="i18n-en">S/R interface and port definition in the SWC, then explicit read on the C side.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;SENDER-RECEIVER-INTERFACE&gt;
+  &lt;SHORT-NAME&gt;If_SensorData&lt;/SHORT-NAME&gt;
+  &lt;DATA-ELEMENTS&gt;
+    &lt;VARIABLE-DATA-PROTOTYPE&gt;
+      &lt;SHORT-NAME&gt;SensorVal&lt;/SHORT-NAME&gt;
+      &lt;TYPE-TREF DEST=
+        "IMPLEMENTATION-DATA-TYPE"&gt;
+        /DataTypes/float32
+      &lt;/TYPE-TREF&gt;
+    &lt;/VARIABLE-DATA-PROTOTYPE&gt;
+  &lt;/DATA-ELEMENTS&gt;
+&lt;/SENDER-RECEIVER-INTERFACE&gt;
+
+&lt;!-- Port dans le SWC --&gt;
+&lt;R-PORT-PROTOTYPE&gt;
+  &lt;SHORT-NAME&gt;RPort_SensorVal&lt;/SHORT-NAME&gt;
+  &lt;REQUIRED-INTERFACE-TREF DEST=
+    "SENDER-RECEIVER-INTERFACE"&gt;
+    /Interfaces/If_SensorData
+  &lt;/REQUIRED-INTERFACE-TREF&gt;
+&lt;/R-PORT-PROTOTYPE&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — <span class="i18n-fr">Lecture explicite</span><span class="i18n-en">Explicit read</span></span>
+<pre><code>/* Generated RTE API prototype
+ *   (from Rte_MyCtrl.h) */
+Std_ReturnType
+  Rte_Read_RPort_SensorVal_SensorVal(
+    float32 *data
+  );
+
+/* Usage in runnable */
+VOID RE_MyCtrl_10ms(VOID)
+{
+  float32 val;
+  Std_ReturnType status;
+
+  status = Rte_Read_
+    RPort_SensorVal_SensorVal(&amp;val);
+
+  if (status == RTE_E_OK) {
+    /* Process valid data */
+    ProcessSensor(val);
+  } else {
+    /* Use last valid / default */
+    Dem_ReportErrorStatus(
+      DemConf_SensorTimeout,
+      DEM_EVENT_STATUS_FAILED
+    );
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Example 3: Client-Server Operation -->
+      <div class="code-split-title"><span class="badge badge-cs">C/S</span> <span class="i18n-fr">Opération Client-Server — Appel synchrone</span><span class="i18n-en">Client-Server Operation — Synchronous Call</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Définition d'une opération de diagnostic C/S et son implémentation côté serveur.</span><span class="i18n-en">Definition of a diagnostic C/S operation and its server-side implementation.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;CLIENT-SERVER-INTERFACE&gt;
+  &lt;SHORT-NAME&gt;If_DiagService&lt;/SHORT-NAME&gt;
+  &lt;OPERATIONS&gt;
+    &lt;CLIENT-SERVER-OPERATION&gt;
+      &lt;SHORT-NAME&gt;RequestReset&lt;/SHORT-NAME&gt;
+      &lt;ARGUMENTS&gt;
+        &lt;ARGUMENT-DATA-PROTOTYPE&gt;
+          &lt;SHORT-NAME&gt;ResetType&lt;/SHORT-NAME&gt;
+          &lt;TYPE-TREF DEST=
+            "IMPLEMENTATION-DATA-TYPE"&gt;
+            /DataTypes/uint8
+          &lt;/TYPE-TREF&gt;
+          &lt;DIRECTION&gt;IN&lt;/DIRECTION&gt;
+        &lt;/ARGUMENT-DATA-PROTOTYPE&gt;
+      &lt;/ARGUMENTS&gt;
+      &lt;POSSIBLE-ERROR-REFS&gt;
+        &lt;POSSIBLE-ERROR-REF DEST=
+          "APPLICATION-ERROR"&gt;
+          E_NOT_OK
+        &lt;/POSSIBLE-ERROR-REF&gt;
+      &lt;/POSSIBLE-ERROR-REFS&gt;
+    &lt;/CLIENT-SERVER-OPERATION&gt;
+  &lt;/OPERATIONS&gt;
+&lt;/CLIENT-SERVER-INTERFACE&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — <span class="i18n-fr">Implémentation serveur</span><span class="i18n-en">Server implementation</span></span>
+<pre><code>/* Server-side runnable triggered by
+ * OperationInvokedEvent */
+Std_ReturnType
+  RE_DiagSrv_RequestReset(
+    uint8 ResetType
+  )
+{
+  Std_ReturnType ret = RTE_E_OK;
+
+  switch (ResetType) {
+    case RESET_SOFT:
+      EcuM_SelectShutdownTarget(
+        ECUM_STATE_RESET,
+        ECUM_RESET_MCU
+      );
+      break;
+
+    case RESET_HARD:
+      EcuM_SelectShutdownTarget(
+        ECUM_STATE_RESET,
+        ECUM_RESET_IO
+      );
+      break;
+
+    default:
+      ret = RTE_E_INVALID;
+      break;
+  }
+  return ret;
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- Example 4: Init Runnable -->
+      <div class="code-split-title"><span class="badge badge-init">Init</span> <span class="i18n-fr">Runnable d'initialisation (InitEvent)</span><span class="i18n-en">Initialization Runnable (InitEvent)</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Déclenchée une seule fois au démarrage du SWC — initialise la mémoire par instance et les valeurs par défaut.</span><span class="i18n-en">Triggered once at SWC startup — initializes per-instance memory and default values.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;RUNNABLE-ENTITY&gt;
+  &lt;SHORT-NAME&gt;RE_MyCtrl_Init&lt;/SHORT-NAME&gt;
+  &lt;CAN-BE-INVOKED-CONCURRENTLY&gt;
+    false
+  &lt;/CAN-BE-INVOKED-CONCURRENTLY&gt;
+  &lt;SYMBOL&gt;RE_MyCtrl_Init&lt;/SYMBOL&gt;
+&lt;/RUNNABLE-ENTITY&gt;
+
+&lt;INIT-EVENT&gt;
+  &lt;SHORT-NAME&gt;IE_MyCtrl_Init&lt;/SHORT-NAME&gt;
+  &lt;START-ON-EVENT-REF DEST=
+    "RUNNABLE-ENTITY"&gt;
+    RE_MyCtrl_Init
+  &lt;/START-ON-EVENT-REF&gt;
+&lt;/INIT-EVENT&gt;
+
+&lt;!-- Per-Instance Memory --&gt;
+&lt;PER-INSTANCE-MEMORY&gt;
+  &lt;SHORT-NAME&gt;Pim_CtrlState&lt;/SHORT-NAME&gt;
+  &lt;TYPE-TREF DEST=
+    "IMPLEMENTATION-DATA-TYPE"&gt;
+    /DataTypes/MyCtrl_StateType
+  &lt;/TYPE-TREF&gt;
+&lt;/PER-INSTANCE-MEMORY&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Rte_MyCtrl.c</span>
+<pre><code>#include "Rte_MyCtrl.h"
+
+/* Init runnable — called once
+ * at SWC startup (InitEvent) */
+VOID RE_MyCtrl_Init(VOID)
+{
+  /* Access Per-Instance Memory */
+  MyCtrl_StateType *pim =
+    Rte_Pim_Pim_CtrlState();
+
+  /* Set default state */
+  pim-&gt;mode       = CTRL_MODE_OFF;
+  pim-&gt;errorCount = 0U;
+  pim-&gt;lastOutput = 0.0f;
+  pim-&gt;isReady    = FALSE;
+
+  /* Read calibration parameter */
+  float32 kp;
+  (void)Rte_Prm_CalPrm_Kp(&amp;kp);
+  pim-&gt;gainKp = kp;
+
+  /* Signal that init is done */
+  (void)Rte_Write_PPort_Status(
+    CTRL_STATUS_INITIALIZED
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="info-box success mt-4">
+        <span class="i18n-fr"><strong>Relation ARXML → C :</strong> Le fichier <code>Rte_&lt;SWC&gt;.h</code> est <strong>généré automatiquement</strong> par l'outil RTE à partir des définitions ARXML. Les noms des fonctions RTE (<code>Rte_Read_</code>, <code>Rte_Write_</code>, <code>Rte_Call_</code>, <code>Rte_Pim_</code>) sont déduits des SHORT-NAME ARXML. Le développeur n'implémente que le corps des runnables.</span><span class="i18n-en"><strong>ARXML → C Relationship:</strong> The <code>Rte_&lt;SWC&gt;.h</code> file is <strong>automatically generated</strong> by the RTE tool from the ARXML definitions. RTE function names (<code>Rte_Read_</code>, <code>Rte_Write_</code>, <code>Rte_Call_</code>, <code>Rte_Pim_</code>) are derived from the ARXML SHORT-NAMEs. The developer only implements the runnable bodies.</span>
+      </div>
+
+      <h2 id="best-practices"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box">
+        <span class="i18n-fr"><strong>Bonne pratique :</strong> Gardez les SWC cohésifs et à usage unique. Un SWC doit représenter une fonction logique. Évitez les SWC monolithiques gérant plusieurs responsabilités sans rapport.</span><span class="i18n-en"><strong>Best Practice:</strong> Keep SWCs cohesive and single-purpose. One SWC should represent one logical function. Avoid monolithic SWCs that handle multiple unrelated responsibilities.</span>
+      </div>
+
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Utilisez des compositions hiérarchiques (<code>CompositionSwComponentType</code>) pour regrouper des SWC liés et simplifier les connexions de ports au niveau système.</span><span class="i18n-en"><strong>Tip:</strong> Use hierarchical compositions (<code>CompositionSwComponentType</code>) to group related SWCs and simplify port connections at the system level.</span>
+      </div>
+
+      <div class="mt-4" style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="introduction.html" class="btn btn-outline"><span class="i18n-fr">← Introduction</span><span class="i18n-en">← Introduction</span></a>
+        <a href="cdd.html" class="btn btn-primary"><span class="i18n-fr">Suivant : CDD →</span><span class="i18n-en">Next: CDD →</span></a>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2026 autosar-fullstack.dev — Yann Nicaise. <span class="i18n-fr">Conçu en pur HTML, CSS &amp; JS.</span><span class="i18n-en">Built with pure HTML, CSS &amp; JS.</span></p>
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

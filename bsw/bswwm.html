@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — BswM | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR BswM — BSW Mode Manager">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">BswM — Gestionnaire de Modes BSW</span><span class="i18n-en">BswM — BSW Mode Manager</span></h1>
+    <p><span class="i18n-fr">Arbitre central des modes de l'ECU : évalue les règles d'entrée/sortie de mode et exécute les listes d'actions associées (activation PDU groups, ComM request, NvM write…).</span><span class="i18n-en">Central ECU mode arbiter: evaluates mode entry/exit rules and executes associated action lists (PDU group activation, ComM request, NvM write…).</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Couche Services</span><span class="i18n-en">Services Layer</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="com.html">Com</a></li>
+        <li><a href="comm.html">ComM</a></li>
+        <li><a href="nm.html">Nm</a></li>
+        <li><a href="ecum.html">EcuM</a></li>
+        <li><a href="bswwm.html" class="active">BswM</a></li>
+        <li><a href="dcm.html">Dcm</a></li>
+        <li><a href="dem.html">Dem</a></li>
+        <li><a href="nvm.html">NvM</a></li>
+        <li><a href="wdgM.html">WdgM</a></li>
+        <li><a href="os.html">OS</a></li>
+        <li><a href="rte.html">RTE</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>BswM</strong> est l'arbitre de modes de l'ECU. Il reçoit des indications de mode (mode requests) depuis ComM, EcuM, Dcm, NvM et les SWCs, évalue un ensemble de <strong>règles</strong> configurées et exécute les <strong>listes d'actions</strong> correspondantes (activer un groupe de PDUs, demander un mode ComM, déclencher un NvM_WriteAll, etc.).</span><span class="i18n-en"><strong>BswM</strong> is the ECU mode arbiter. It receives mode indications (mode requests) from ComM, EcuM, Dcm, NvM and SWCs, evaluates a set of configured <strong>rules</strong> and executes the corresponding <strong>action lists</strong> (activate a PDU group, request a ComM mode, trigger NvM_WriteAll, etc.).</span></p>
+
+      <h3><span class="i18n-fr">Dépendances principales</span><span class="i18n-en">Key Dependencies</span></h3>
+      <ul>
+        <li><strong>EcuM</strong> — <span class="i18n-fr">indications de phase startup/shutdown</span><span class="i18n-en">startup/shutdown phase indications</span></li>
+        <li><strong>ComM</strong> — <span class="i18n-fr">indications de mode de communication</span><span class="i18n-en">communication mode indications</span></li>
+        <li><strong>Com</strong> — <span class="i18n-fr">activation/désactivation des IPduGroups</span><span class="i18n-en">IPduGroup enable/disable</span></li>
+      </ul>
+
+      <h2 id="config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></h2>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Conteneur</span><span class="i18n-en">Container</span></th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>BswMModeRequestPort</td><td><span class="i18n-fr">Port recevant une indication de mode</span><span class="i18n-en">Port receiving a mode indication</span></td></tr>
+          <tr><td>BswMRule</td><td><span class="i18n-fr">Règle logique sur les modes (AND/OR)</span><span class="i18n-en">Logical rule on modes (AND/OR)</span></td></tr>
+          <tr><td>BswMActionList</td><td><span class="i18n-fr">Liste d'actions exécutée quand la règle est vraie/fausse</span><span class="i18n-en">Action list executed when rule is true/false</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">Rule</span> <span class="i18n-fr">Règle BswM — activation PDU Group après ComM FULL_COM</span><span class="i18n-en">BswM Rule — PDU Group activation after ComM FULL_COM</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Règle BswM qui active le groupe de PDUs de communication lorsque ComM passe en FULL_COMMUNICATION.</span><span class="i18n-en">BswM rule that activates the communication PDU group when ComM enters FULL_COMMUNICATION.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;BSWM-RULE&gt;
+  &lt;SHORT-NAME&gt;
+    Rule_ComM_FullCom
+  &lt;/SHORT-NAME&gt;
+  &lt;BSWM-RULE-EXPRESSION-REF&gt;
+    LogExp_ComM_FullCom
+  &lt;/BSWM-RULE-EXPRESSION-REF&gt;
+  &lt;BSWM-TRUE-ACTION-LIST-REF&gt;
+    AL_Enable_PduGroups
+  &lt;/BSWM-TRUE-ACTION-LIST-REF&gt;
+  &lt;BSWM-FALSE-ACTION-LIST-REF&gt;
+    AL_Disable_PduGroups
+  &lt;/BSWM-FALSE-ACTION-LIST-REF&gt;
+&lt;/BSWM-RULE&gt;
+
+&lt;BSWM-ACTION-LIST&gt;
+  &lt;SHORT-NAME&gt;
+    AL_Enable_PduGroups
+  &lt;/SHORT-NAME&gt;
+  &lt;BSWM-ACTIONS&gt;
+    &lt;BSWM-COM-IPDU-GROUP-SWITCH&gt;
+      &lt;BSWM-IPDU-GROUP-REF&gt;
+        ComIPduGroup_Tx_Vehicle
+      &lt;/BSWM-IPDU-GROUP-REF&gt;
+      &lt;REQUESTED-MODE&gt;
+        ENABLED
+      &lt;/REQUESTED-MODE&gt;
+    &lt;/BSWM-COM-IPDU-GROUP-SWITCH&gt;
+  &lt;/BSWM-ACTIONS&gt;
+&lt;/BSWM-ACTION-LIST&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Generated / Integration</span>
+<pre><code>/* BswM_MainFunction() — called
+ * cyclically by OS (e.g. 10 ms) */
+
+void BswM_MainFunction(void)
+{
+  /* 1. Evaluate all rules against
+   *    current mode indications */
+
+  /* Rule: ComM_FullCom */
+  if (BswM_GetComMIndication(
+        ComMConf_Channel_CAN0)
+      == COMM_FULL_COMMUNICATION)
+  {
+    /* Execute TRUE action list:
+     * Enable PDU groups */
+    Com_IpduGroupControl(
+      ComConf_IPduGrp_Tx_Vehicle,
+      TRUE   /* enable */
+    );
+    Com_IpduGroupControl(
+      ComConf_IPduGrp_Rx_Vehicle,
+      TRUE
+    );
+  }
+  else
+  {
+    /* Execute FALSE action list:
+     * Disable PDU groups */
+    Com_IpduGroupControl(
+      ComConf_IPduGrp_Tx_Vehicle,
+      FALSE  /* disable */
+    );
+  }
+}
+
+/* Mode indication from ComM */
+void BswM_ComM_CurrentMode(
+  NetworkHandleType Network,
+  ComM_ModeType Mode)
+{
+  BswM_SetComMIndication(
+    Network, Mode);
+}</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Documentez chaque règle BswM et sa liste d'actions dans un tableau de traçabilité. Les règles complexes (AND/OR imbriqués) sont difficiles à déboguer — préférez des règles simples et des listes d'actions séquentielles. Testez les transitions de mode avec un simulateur de bus.</span><span class="i18n-en"><strong>Tip:</strong> Document each BswM rule and its action list in a traceability table. Complex rules (nested AND/OR) are hard to debug — prefer simple rules and sequential action lists. Test mode transitions with a bus simulator.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="ecum.html" class="prev">← EcuM</a>
+        <a href="dcm.html" class="next">Dcm →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

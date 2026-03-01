@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Mcu | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Mcu Driver — MCAL Microcontroller Unit">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Mcu — Driver Microcontrôleur</span><span class="i18n-en">Mcu — Microcontroller Driver</span></h1>
+    <p><span class="i18n-fr">Driver MCAL fondamental : initialisation de l'horloge (PLL), gestion des modes de puissance (RUN, STANDBY, STOP), RAM initialization et contrôle du reset.</span><span class="i18n-en">Fundamental MCAL driver: clock initialization (PLL), power mode management (RUN, STANDBY, STOP), RAM initialization and reset control.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html">Can</a></li><li><a href="lin.html">Lin</a></li><li><a href="fr.html">Fr</a></li><li><a href="eth.html">Eth</a></li><li><a href="spi.html">Spi</a></li><li><a href="adc.html">Adc</a></li><li><a href="dio.html">Dio</a></li><li><a href="pwm.html">Pwm</a></li><li><a href="icu.html">Icu</a></li><li><a href="gpt.html">Gpt</a></li><li><a href="port.html">Port</a></li><li><a href="fls.html">Fls</a></li><li><a href="wdg.html">Wdg</a></li>
+        <li><a href="mcu.html" class="active">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le driver <strong>Mcu</strong> est le premier module MCAL initialisé. Il configure les arbres d'horloge du MCU (oscillateur → PLL → bus clocks), initialise les sections RAM et fournit les services de changement de mode de puissance (RUN → STANDBY/STOP) et de reset contrôlé. <code>Mcu_Init()</code> doit être appelé avant <code>Port_Init()</code> et tous les autres drivers.</span><span class="i18n-en">The <strong>Mcu</strong> driver is the first MCAL module initialized. It configures MCU clock trees (oscillator → PLL → bus clocks), initializes RAM sections and provides power mode change services (RUN → STANDBY/STOP) and controlled reset. <code>Mcu_Init()</code> must be called before <code>Port_Init()</code> and all other drivers.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">Clock</span> <span class="i18n-fr">Mcu Clock Configuration &amp; Init</span><span class="i18n-en">Mcu Clock Configuration &amp; Init</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;MCU-CLOCK-SETTING&gt;
+  &lt;SHORT-NAME&gt;
+    McuClk_160MHz
+  &lt;/SHORT-NAME&gt;
+  &lt;MCU-CLOCK-FREQUENCY&gt;
+    160000000  &lt;!-- 160 MHz --&gt;
+  &lt;/MCU-CLOCK-FREQUENCY&gt;
+  &lt;MCU-PLL-SETTINGS&gt;
+    &lt;PLL-MULTIPLIER&gt;40&lt;/PLL-MULTIPLIER&gt;
+    &lt;PLL-DIVIDER&gt;2&lt;/PLL-DIVIDER&gt;
+    &lt;PLL-OUTPUT-DIVIDER&gt;
+      1
+    &lt;/PLL-OUTPUT-DIVIDER&gt;
+    &lt;PLL-INPUT-FREQUENCY&gt;
+      8000000  &lt;!-- 8 MHz XTAL --&gt;
+    &lt;/PLL-INPUT-FREQUENCY&gt;
+  &lt;/MCU-PLL-SETTINGS&gt;
+  &lt;MCU-BUS-CLOCKS&gt;
+    &lt;APB1-PRESCALER&gt;4&lt;/APB1-PRESCALER&gt;
+    &lt;APB2-PRESCALER&gt;2&lt;/APB2-PRESCALER&gt;
+    &lt;AHB-PRESCALER&gt;1&lt;/AHB-PRESCALER&gt;
+  &lt;/MCU-BUS-CLOCKS&gt;
+&lt;/MCU-CLOCK-SETTING&gt;
+
+&lt;MCU-MODE-SETTING&gt;
+  &lt;SHORT-NAME&gt;McuMode_Run&lt;/SHORT-NAME&gt;
+  &lt;MCU-MODE&gt;RUN&lt;/MCU-MODE&gt;
+&lt;/MCU-MODE-SETTING&gt;
+&lt;MCU-MODE-SETTING&gt;
+  &lt;SHORT-NAME&gt;
+    McuMode_Standby
+  &lt;/SHORT-NAME&gt;
+  &lt;MCU-MODE&gt;STANDBY&lt;/MCU-MODE&gt;
+&lt;/MCU-MODE-SETTING&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Mcu Init &amp; Clock</span>
+<pre><code>#include "Mcu.h"
+
+/* Very first MCAL init call */
+void EcuM_AL_DriverInitZero(void)
+{
+  /* 1. Init MCU module */
+  Mcu_Init(&amp;McuConfigSet);
+
+  /* 2. Init PLL (8 MHz → 160 MHz)
+   */
+  Mcu_InitClock(
+    McuConf_Clock_160MHz);
+
+  /* 3. Wait PLL lock */
+  while (Mcu_GetPllStatus()
+    != MCU_PLL_LOCKED) { }
+
+  /* 4. Distribute clock to
+   *    all bus peripherals */
+  Mcu_DistributePllClock();
+
+  /* After this:
+   * HCLK = 160 MHz (AHB)
+   * APB1 = 40 MHz
+   * APB2 = 80 MHz
+   *
+   * 5. Init RAM sections */
+  Mcu_InitRamSection(0U);
+}
+
+/* Shutdown: enter STANDBY */
+Mcu_SetMode(
+  McuConf_Mode_Standby);
+/* MCU enters low-power,
+ * only wakeup pins active */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Vérifiez toujours <code>Mcu_GetPllStatus()</code> avant de distribuer l'horloge PLL — un PLL non verrouillé cause des comportements erratiques de tous les périphériques. Utilisez <code>Mcu_GetResetReason()</code> au démarrage pour diagnostiquer les resets inattendus (watchdog, power-on, software).</span><span class="i18n-en"><strong>Tip:</strong> Always check <code>Mcu_GetPllStatus()</code> before distributing PLL clock — an unlocked PLL causes erratic behavior in all peripherals. Use <code>Mcu_GetResetReason()</code> at startup to diagnose unexpected resets (watchdog, power-on, software).</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="wdg.html" class="prev">← Wdg</a>
+        <a href="index.html" class="next"><span class="i18n-fr">Tous les modules →</span><span class="i18n-en">All Modules →</span></a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer"><div class="container"><p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p></div></footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

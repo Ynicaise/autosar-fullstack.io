@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — WdgM | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR WdgM — Watchdog Manager">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">WdgM — Gestionnaire Watchdog</span><span class="i18n-en">WdgM — Watchdog Manager</span></h1>
+    <p><span class="i18n-fr">Supervision de l'exécution logicielle : alive supervision, deadline monitoring et logical supervision via checkpoints et graphes de programme.</span><span class="i18n-en">Software execution supervision: alive supervision, deadline monitoring and logical supervision via checkpoints and program flow graphs.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Couche Services</span><span class="i18n-en">Services Layer</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="com.html">Com</a></li>
+        <li><a href="comm.html">ComM</a></li>
+        <li><a href="nm.html">Nm</a></li>
+        <li><a href="ecum.html">EcuM</a></li>
+        <li><a href="bswwm.html">BswM</a></li>
+        <li><a href="dcm.html">Dcm</a></li>
+        <li><a href="dem.html">Dem</a></li>
+        <li><a href="nvm.html">NvM</a></li>
+        <li><a href="wdgM.html" class="active">WdgM</a></li>
+        <li><a href="os.html">OS</a></li>
+        <li><a href="rte.html">RTE</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>WdgM</strong> supervise l'exécution correcte des entités logicielles (Supervised Entities). Il implémente trois mécanismes : <strong>alive supervision</strong> (vérification de la fréquence d'exécution), <strong>deadline monitoring</strong> (temps entre deux checkpoints) et <strong>logical supervision</strong> (enchaînement correct des checkpoints dans un graphe de programme).</span><span class="i18n-en"><strong>WdgM</strong> supervises the correct execution of software entities (Supervised Entities). It implements three mechanisms: <strong>alive supervision</strong> (execution frequency check), <strong>deadline monitoring</strong> (time between two checkpoints) and <strong>logical supervision</strong> (correct checkpoint sequence in a program flow graph).</span></p>
+
+      <h3><span class="i18n-fr">Dépendances principales</span><span class="i18n-en">Key Dependencies</span></h3>
+      <ul>
+        <li><strong>WdgIf</strong> — <span class="i18n-fr">abstraction driver watchdog</span><span class="i18n-en">watchdog driver abstraction</span></li>
+        <li><strong>Wdg</strong> — <span class="i18n-fr">driver watchdog hardware (MCAL)</span><span class="i18n-en">hardware watchdog driver (MCAL)</span></li>
+        <li><strong>Dem</strong> — <span class="i18n-fr">report d'erreur supervision</span><span class="i18n-en">supervision error reporting</span></li>
+      </ul>
+
+      <h2 id="config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></h2>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Conteneur</span><span class="i18n-en">Container</span></th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>WdgMSupervisedEntity</td><td><span class="i18n-fr">Entité supervisée (SWC ou BSW module)</span><span class="i18n-en">Supervised entity (SWC or BSW module)</span></td></tr>
+          <tr><td>WdgMCheckpoint</td><td><span class="i18n-fr">Point de contrôle dans le flux d'exécution</span><span class="i18n-en">Checkpoint in execution flow</span></td></tr>
+          <tr><td>WdgMAliveSupervision</td><td><span class="i18n-fr">Paramètres alive (min/max cycles)</span><span class="i18n-en">Alive parameters (min/max cycles)</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">Alive</span> <span class="i18n-fr">Alive Supervision &amp; checkpoint reporting</span><span class="i18n-en">Alive Supervision &amp; Checkpoint Reporting</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Configuration d'une entité supervisée avec alive supervision et reporting de checkpoint depuis une tâche cyclique.</span><span class="i18n-en">Supervised entity configuration with alive supervision and checkpoint reporting from a cyclic task.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;WDGM-SUPERVISED-ENTITY&gt;
+  &lt;SHORT-NAME&gt;SE_MainTask&lt;/SHORT-NAME&gt;
+  &lt;SUPERVISED-ENTITY-ID&gt;
+    0
+  &lt;/SUPERVISED-ENTITY-ID&gt;
+  &lt;WDGM-CHECKPOINTS&gt;
+    &lt;WDGM-CHECKPOINT&gt;
+      &lt;SHORT-NAME&gt;CP_Alive&lt;/SHORT-NAME&gt;
+      &lt;CHECKPOINT-ID&gt;0&lt;/CHECKPOINT-ID&gt;
+    &lt;/WDGM-CHECKPOINT&gt;
+  &lt;/WDGM-CHECKPOINTS&gt;
+&lt;/WDGM-SUPERVISED-ENTITY&gt;
+
+&lt;WDGM-ALIVE-SUPERVISION&gt;
+  &lt;WDGM-CHECKPOINT-REF&gt;
+    CP_Alive
+  &lt;/WDGM-CHECKPOINT-REF&gt;
+  &lt;EXPECTED-ALIVE-INDICATIONS&gt;
+    10  &lt;!-- expected per supv cycle --&gt;
+  &lt;/EXPECTED-ALIVE-INDICATIONS&gt;
+  &lt;MIN-MARGIN&gt;2&lt;/MIN-MARGIN&gt;
+  &lt;MAX-MARGIN&gt;2&lt;/MAX-MARGIN&gt;
+  &lt;SUPERVISION-REFERENCE-CYCLE&gt;
+    100  &lt;!-- ms --&gt;
+  &lt;/SUPERVISION-REFERENCE-CYCLE&gt;
+&lt;/WDGM-ALIVE-SUPERVISION&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Cyclic Task (10 ms)</span>
+<pre><code>#include "WdgM.h"
+
+#define SE_MainTask_ID   0U
+#define CP_Alive_ID      0U
+
+/* Called every 10 ms by OS */
+TASK(Task_10ms)
+{
+  /* 1. Report alive checkpoint */
+  WdgM_CheckpointReached(
+    SE_MainTask_ID,
+    CP_Alive_ID
+  );
+
+  /* 2. Application logic */
+  App_CyclicProcessing();
+
+  TerminateTask();
+}
+
+/* WdgM_MainFunction() runs every
+ * 100 ms (supervision cycle).
+ * It checks that CP_Alive was
+ * reached 10 ±2 times (8..12).
+ *
+ * If count is out of range:
+ *  - SE status → EXPIRED
+ *  - Global status → STOPPED
+ *  - Wdg not triggered → MCU reset
+ */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Utilisez la <strong>logical supervision</strong> pour les séquences critiques (ex: init → config → run). Les marges alive doivent tenir compte des jitters d'ordonnancement. Testez les scénarios de défaillance (tâche bloquée, boucle infinie) pour valider le temps de réaction du watchdog.</span><span class="i18n-en"><strong>Tip:</strong> Use <strong>logical supervision</strong> for critical sequences (e.g. init → config → run). Alive margins must account for scheduling jitter. Test failure scenarios (blocked task, infinite loop) to validate watchdog reaction time.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="nvm.html" class="prev">← NvM</a>
+        <a href="os.html" class="next">OS →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -3,6 +3,10 @@
    Dark professional theme for AUTOSAR engineering portfolio
    ============================================================ */
 
+/* --- Internationalisation (FR/EN) toggle ------------------- */
+html[lang="fr"] .i18n-en { display: none !important; }
+html[lang="en"] .i18n-fr { display: none !important; }
+
 /* --- Reset & Base ------------------------------------------ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -130,6 +134,43 @@ pre code { background: none; padding: 0; }
 .nav-links a:hover,
 .nav-links a.active { color: var(--accent); }
 
+/* Language switch button */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.lang-switch .lang-label-fr,
+.lang-switch .lang-label-en {
+  padding: 4px 8px;
+  color: var(--text-muted);
+  transition: background var(--transition), color var(--transition);
+}
+
+.lang-switch .lang-label-fr.active,
+.lang-switch .lang-label-en.active {
+  background: var(--accent-dim);
+  color: #fff;
+}
+
+.lang-switch .lang-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+}
+
 .nav-toggle {
   display: none;
   background: none;
@@ -161,6 +202,9 @@ pre code { background: none; padding: 0; }
     gap: 1rem;
   }
   .nav-links.open { display: flex; }
+  .navbar { gap: .75rem; }
+  .lang-switch { order: 1; }
+  .nav-toggle { order: 2; }
 }
 
 /* --- Hero ------------------------------------------------- */
@@ -677,6 +721,145 @@ pre code { background: none; padding: 0; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* --- Nav Dropdown ----------------------------------------- */
+.nav-dropdown { position: relative; }
+.nav-dropdown > a::after {
+  content: '▾';
+  margin-left: .3rem;
+  font-size: .7em;
+  opacity: .6;
+}
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .5rem 0;
+  min-width: 180px;
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  list-style: none;
+}
+.dropdown-menu li { margin: 0; }
+.dropdown-menu a {
+  display: block;
+  padding: .5rem 1rem;
+  color: var(--text-secondary);
+  font-size: .85rem;
+  transition: color .2s, background .2s;
+}
+.dropdown-menu a:hover,
+.dropdown-menu a.active {
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+.nav-dropdown:hover .dropdown-menu,
+.nav-dropdown:focus-within .dropdown-menu {
+  display: block;
+}
+@media (max-width: 768px) {
+  .dropdown-menu {
+    position: static;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0 0 0 1rem;
+  }
+  .dropdown-menu a { padding: .3rem 0; }
+  .nav-dropdown:hover .dropdown-menu,
+  .nav-dropdown:focus-within .dropdown-menu,
+  .nav-links.active .dropdown-menu { display: block; }
+}
+
+/* --- Code Split (side-by-side ARXML / C) ------------------- */
+.code-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+}
+.code-split-pane {
+  position: relative;
+  overflow-x: auto;
+}
+.code-split-pane + .code-split-pane {
+  border-left: 1px solid var(--border);
+}
+.code-split-label {
+  display: block;
+  padding: .45rem .9rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(88,166,255,.06);
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+.code-split-label.label-arxml { color: var(--orange); background: rgba(210,153,34,.06); }
+.code-split-label.label-c      { color: var(--green);  background: rgba(63,185,80,.06);  }
+.code-split-pane pre {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  font-size: .78rem;
+  line-height: 1.55;
+  padding: 1rem;
+  min-height: 100%;
+}
+.code-split-pane code {
+  font-size: .78rem;
+}
+.code-split-title {
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 2rem 0 .3rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.code-split-title .badge {
+  display: inline-block;
+  padding: .15rem .5rem;
+  border-radius: 4px;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--bg-primary);
+}
+.code-split-title .badge-runnable  { background: var(--purple); }
+.code-split-title .badge-sr        { background: var(--accent); }
+.code-split-title .badge-cs        { background: var(--green);  }
+.code-split-title .badge-init       { background: var(--orange); }
+.code-split-desc {
+  font-size: .85rem;
+  color: var(--text-secondary);
+  margin: 0 0 .5rem;
+}
+@media (max-width: 900px) {
+  .code-split {
+    grid-template-columns: 1fr;
+  }
+  .code-split-pane + .code-split-pane {
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* --- Utility ----------------------------------------------- */
+.btn-sm { padding: .4rem .9rem; font-size: .8rem; }
+.text-red { color: var(--red); }
 
 /* --- Print ------------------------------------------------ */
 @media print {

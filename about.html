@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>À propos — Yann Nicaise | autosar-fullstack.dev</title>
+  <meta name="description" content="Yann Nicaise — Ingénieur logiciel AUTOSAR Full Stack. Expert en intégration MCAL, BSW, RTE, OS et ASW.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="about.html" class="active"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="asw/introduction.html">Introduction</a></li>
+          <li><a href="asw/swc.html">SWC</a></li>
+          <li><a href="asw/cdd.html">CDD</a></li>
+          <li><a href="asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="bsw/com.html">BSW</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span>
+      <span class="lang-sep"></span>
+      <span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="module-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a> / <strong><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></strong></div>
+    <h1>Yann Nicaise</h1>
+    <p class="mt-2" style="color:var(--text-secondary);max-width:680px;"><span class="i18n-fr">Ingénieur logiciel AUTOSAR Full Stack — Expert en intégration ECU sur plateforme AUTOSAR Classic</span><span class="i18n-en">Full Stack AUTOSAR Software Engineer — Expert in classic AUTOSAR platform ECU integration</span></p>
+  </div>
+</section>
+
+<section class="section" id="about">
+  <div class="container">
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon text-green">&#9670;</div>
+        <h3><span class="i18n-fr">Configuration MCAL</span><span class="i18n-en">MCAL Configuration</span></h3>
+        <p><span class="i18n-fr">Configuration de la couche d'abstraction microcontrôleur — Dio, Adc, Pwm, Spi, Gpt, Icu, Port, Fls, Wdg, Mcu. Maîtrise des chaînes d'outils spécifiques aux fournisseurs.</span><span class="i18n-en">Low-level microcontroller abstraction layer setup — Dio, Adc, Pwm, Spi, Gpt, Icu, Port, Fls, Wdg, Mcu. Vendor-specific tool-chain expertise.</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon text-orange">&#9670;</div>
+        <h3><span class="i18n-fr">Intégration BSW</span><span class="i18n-en">BSW Integration</span></h3>
+        <p><span class="i18n-fr">Intégration complète de la pile logicielle de base incluant Com, Dcm, Dem, NvM, EcuM, BswM, WdgM, PduR et tous les modules d'interface de communication.</span><span class="i18n-en">Full basic software stack integration including Com, Dcm, Dem, NvM, EcuM, BswM, WdgM, PduR, and all communication interface modules.</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon text-accent">&#9670;</div>
+        <h3><span class="i18n-fr">Génération RTE &amp; Configuration OS</span><span class="i18n-en">RTE Generation &amp; OS Configuration</span></h3>
+        <p><span class="i18n-fr">Communication inter-SWC basée sur les ports, patterns sender-receiver &amp; client-serveur, mapping runnable-to-task et ordonnancement AUTOSAR OS.</span><span class="i18n-en">Port-based inter-SWC communication, sender-receiver &amp; client-server patterns, runnable-to-task mapping, and AUTOSAR OS scheduling.</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="color:var(--purple)">&#9670;</div>
+        <h3><span class="i18n-fr">Développement ASW</span><span class="i18n-en">ASW Development</span></h3>
+        <p><span class="i18n-fr">Développement de composants logiciels applicatifs (SWC) et de Complex Device Drivers (CDD), conception ARXML avec méthodologie de modélisation XDM.</span><span class="i18n-en">Application Software Component (SWC) and Complex Device Driver (CDD) development, ARXML design with XDM modeling methodology.</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="color:var(--cyan)">&#9670;</div>
+        <h3><span class="i18n-fr">Conception ARXML &amp; XDM</span><span class="i18n-en">ARXML &amp; XDM Design</span></h3>
+        <p><span class="i18n-fr">Rédaction ARXML complète — types de données, interfaces, compositions, comportements internes et workflows de modélisation XDM.</span><span class="i18n-en">Comprehensive ARXML authoring — data types, interfaces, compositions, internal behaviors, and full XDM-based modeling workflows.</span></p>
+      </div>
+      <div class="card">
+        <div class="card-icon" style="color:var(--red)">&#9670;</div>
+        <h3><span class="i18n-fr">Intégration ECU complète</span><span class="i18n-en">Full ECU Integration</span></h3>
+        <p><span class="i18n-fr">Mise en route ECU de bout en bout : du hardware nu à une pile logicielle AUTOSAR complètement intégrée et validée, prête pour la production.</span><span class="i18n-en">End-to-end ECU bring-up: from bare hardware to a fully integrated and validated AUTOSAR software stack ready for production.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== Skills ====== -->
+<section class="section" id="skills">
+  <div class="container">
+    <h2 class="section-title"><span class="i18n-fr">Compétences techniques</span><span class="i18n-en">Technical Skills</span></h2>
+    <p class="section-subtitle"><span class="i18n-fr">Compétences clés à travers la pile AUTOSAR</span><span class="i18n-en">Core competencies across the AUTOSAR stack</span></p>
+
+    <h3 class="mt-2 mb-2" style="font-size:.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">MCAL</h3>
+    <div class="skill-tags mb-4">
+      <span class="tag tag-red">Can</span>
+      <span class="tag tag-red">Lin</span>
+      <span class="tag tag-red">Fr</span>
+      <span class="tag tag-red">Eth</span>
+      <span class="tag tag-red">Spi</span>
+      <span class="tag tag-red">Adc</span>
+      <span class="tag tag-red">Dio</span>
+      <span class="tag tag-red">Pwm</span>
+      <span class="tag tag-red">Icu</span>
+      <span class="tag tag-red">Gpt</span>
+      <span class="tag tag-red">Port</span>
+      <span class="tag tag-red">Fls</span>
+      <span class="tag tag-red">Wdg</span>
+      <span class="tag tag-red">Mcu</span>
+    </div>
+
+    <h3 class="mt-2 mb-2" style="font-size:.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;"><span class="i18n-fr">Services BSW</span><span class="i18n-en">BSW Services</span></h3>
+    <div class="skill-tags mb-4">
+      <span class="tag">Com</span>
+      <span class="tag">ComM</span>
+      <span class="tag">Nm</span>
+      <span class="tag">EcuM</span>
+      <span class="tag">BswM</span>
+      <span class="tag">Dcm</span>
+      <span class="tag">Dem</span>
+      <span class="tag">NvM</span>
+      <span class="tag">WdgM</span>
+      <span class="tag">OS</span>
+      <span class="tag">RTE</span>
+    </div>
+
+    <h3 class="mt-2 mb-2" style="font-size:.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Communication &amp; <span class="i18n-fr">Mémoire</span><span class="i18n-en">Memory</span></h3>
+    <div class="skill-tags mb-4">
+      <span class="tag tag-orange">PduR</span>
+      <span class="tag tag-orange">IpduM</span>
+      <span class="tag tag-orange">CanIf</span>
+      <span class="tag tag-orange">LinIf</span>
+      <span class="tag tag-orange">FrIf</span>
+      <span class="tag tag-orange">EthIf</span>
+      <span class="tag tag-orange">CanTP</span>
+      <span class="tag tag-orange">J1939TP</span>
+      <span class="tag tag-orange">Fee</span>
+      <span class="tag tag-orange">Ea</span>
+      <span class="tag tag-orange">IoHwAb</span>
+    </div>
+
+    <h3 class="mt-2 mb-2" style="font-size:.85rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Application &amp; <span class="i18n-fr">Outils</span><span class="i18n-en">Tools</span></h3>
+    <div class="skill-tags mb-4">
+      <span class="tag tag-green"><span class="i18n-fr">Conception SWC</span><span class="i18n-en">SWC Design</span></span>
+      <span class="tag tag-green"><span class="i18n-fr">Développement CDD</span><span class="i18n-en">CDD Development</span></span>
+      <span class="tag tag-purple">ARXML</span>
+      <span class="tag tag-purple"><span class="i18n-fr">Modélisation XDM</span><span class="i18n-en">XDM Modeling</span></span>
+      <span class="tag tag-cyan"><span class="i18n-fr">Intégration ECU</span><span class="i18n-en">ECU Integration</span></span>
+      <span class="tag tag-cyan"><span class="i18n-fr">Mapping Runnable</span><span class="i18n-en">Runnable Mapping</span></span>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2026 autosar-fullstack.dev — Yann Nicaise. <span class="i18n-fr">Conçu en pur HTML, CSS &amp; JS.</span><span class="i18n-en">Built with pure HTML, CSS &amp; JS.</span></p>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

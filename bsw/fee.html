@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Fee | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Fee — Flash EEPROM Emulation">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Fee — Émulation EEPROM sur Flash</span><span class="i18n-en">Fee — Flash EEPROM Emulation</span></h1>
+    <p><span class="i18n-fr">Émule une EEPROM au dessus de la mémoire Flash interne : gestion de l'usure (wear leveling), écriture par blocs logiques et garbage collection transparente.</span><span class="i18n-en">Emulates an EEPROM on top of internal Flash memory: wear leveling, logical block writes and transparent garbage collection.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Abstraction ECU</span><span class="i18n-en">ECU Abstraction</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="canif.html">CanIf</a></li>
+        <li><a href="linif.html">LinIf</a></li>
+        <li><a href="frif.html">FrIf</a></li>
+        <li><a href="ethif.html">EthIf</a></li>
+        <li><a href="fee.html" class="active">Fee</a></li>
+        <li><a href="ea.html">Ea</a></li>
+        <li><a href="iohwab.html">IoHwAb</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>Fee</strong> émuler une EEPROM au dessus de la Flash interne du MCU. Il convertit les opérations d'écriture bloc-par-bloc en opérations Flash (effacement de secteur + programmation) tout en assurant le wear leveling pour maximiser la durée de vie de la Flash. Il expose l'interface <code>MemIf</code> standard vers le NvM.</span><span class="i18n-en"><strong>Fee</strong> emulates an EEPROM on top of the MCU's internal Flash. It converts block-by-block write operations into Flash operations (sector erase + programming) while ensuring wear leveling to maximize Flash lifetime. It exposes the standard <code>MemIf</code> interface to NvM.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-init">Block</span> <span class="i18n-fr">Fee Block Configuration &amp; opérations</span><span class="i18n-en">Fee Block Configuration &amp; Operations</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;FEE-BLOCK-CONFIGURATION&gt;
+  &lt;SHORT-NAME&gt;
+    FeeBlock_EngCalib
+  &lt;/SHORT-NAME&gt;
+  &lt;BLOCK-NUMBER&gt;8&lt;/BLOCK-NUMBER&gt;
+  &lt;BLOCK-SIZE&gt;64&lt;/BLOCK-SIZE&gt;
+  &lt;IMMEDIATE-DATA&gt;false&lt;/IMMEDIATE-DATA&gt;
+  &lt;NUMBER-OF-WRITE-CYCLES&gt;
+    100000
+  &lt;/NUMBER-OF-WRITE-CYCLES&gt;
+&lt;/FEE-BLOCK-CONFIGURATION&gt;
+
+&lt;FEE-GENERAL&gt;
+  &lt;FEE-VIRTUAL-PAGE-SIZE&gt;
+    8  &lt;!-- bytes --&gt;
+  &lt;/FEE-VIRTUAL-PAGE-SIZE&gt;
+&lt;/FEE-GENERAL&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Fee Operations</span>
+<pre><code>/* Fee operates asynchronously:
+ *
+ * 1. NvM calls Fee_Write(BlockId, Buf)
+ *
+ * 2. Fee_MainFunction() processes:
+ *    a. Find free virtual page
+ *    b. Write block header + data
+ *    c. If sector full → garbage
+ *       collection (copy valid
+ *       blocks to next sector,
+ *       erase old sector)
+ *
+ * 3. Fee calls Fls_Write() for
+ *    actual Flash programming
+ *
+ * 4. Fee_MainFunction() polls
+ *    Fls_GetJobResult() until done
+ *
+ * 5. NvM notified via
+ *    Fee_JobEndNotification()
+ */
+
+/* Wear leveling: Fee alternates
+ * between 2+ Flash sectors to
+ * distribute erase cycles evenly.
+ * Virtual pages track block
+ * validity (valid/invalid/erased).
+ */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Dimensionnez les secteurs Fee avec au moins 2× la taille totale des blocs pour assurer un garbage collection correct. Utilisez <code>IMMEDIATE-DATA</code> pour les données critiques qui doivent être écrites immédiatement, même pendant un shutdown.</span><span class="i18n-en"><strong>Tip:</strong> Size Fee sectors to at least 2× the total block size to ensure correct garbage collection. Use <code>IMMEDIATE-DATA</code> for critical data that must be written immediately, even during shutdown.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="ethif.html" class="prev">← EthIf</a>
+        <a href="ea.html" class="next">Ea →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

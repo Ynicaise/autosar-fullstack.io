@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — J1939Tp | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR J1939Tp — SAE J1939 Transport Protocol">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">J1939Tp — Protocole de Transport J1939</span><span class="i18n-en">J1939Tp — J1939 Transport Protocol</span></h1>
+    <p><span class="i18n-fr">Transport multi-trames pour le standard SAE J1939 (véhicules lourds) : BAM (Broadcast Announce Message), CMDT (Connection Mode Data Transfer) et segmentation des PGN &gt; 8 octets.</span><span class="i18n-en">Multi-frame transport for the SAE J1939 standard (heavy-duty vehicles): BAM (Broadcast Announce Message), CMDT (Connection Mode Data Transfer) and PGN &gt; 8 bytes segmentation.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Communication &amp; Transport</span><span class="i18n-en">Communication &amp; Transport</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="pdur.html">PduR</a></li>
+        <li><a href="ipdum.html">IpduM</a></li>
+        <li><a href="cantp.html">CanTp</a></li>
+        <li><a href="j1939tp.html" class="active">J1939Tp</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>J1939Tp</strong> implémente les protocoles de transport définis par SAE J1939-21 pour les véhicules lourds (camions, bus, engins de chantier). Contrairement au CanTp (ISO 15765-2), il utilise des PGN (Parameter Group Number) spécifiques pour le contrôle de transport : TP.CM (60416) et TP.DT (60160).</span><span class="i18n-en"><strong>J1939Tp</strong> implements transport protocols defined by SAE J1939-21 for heavy-duty vehicles (trucks, buses, construction equipment). Unlike CanTp (ISO 15765-2), it uses specific PGN (Parameter Group Numbers) for transport control: TP.CM (60416) and TP.DT (60160).</span></p>
+
+      <h3><span class="i18n-fr">Dépendances principales</span><span class="i18n-en">Key Dependencies</span></h3>
+      <ul>
+        <li><strong>PduR</strong> — <span class="i18n-fr">routage des N-SDU J1939</span><span class="i18n-en">J1939 N-SDU routing</span></li>
+        <li><strong>CanIf</strong> — <span class="i18n-fr">envoi / réception des trames CAN J1939</span><span class="i18n-en">J1939 CAN frame send / receive</span></li>
+      </ul>
+
+      <h2 id="config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></h2>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Conteneur</span><span class="i18n-en">Container</span></th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>J1939TpChannel</td><td><span class="i18n-fr">Canal de transport (BAM / CMDT)</span><span class="i18n-en">Transport channel (BAM / CMDT)</span></td></tr>
+          <tr><td>J1939TpRxPg</td><td><span class="i18n-fr">Parameter Group en réception</span><span class="i18n-en">Receive Parameter Group</span></td></tr>
+          <tr><td>J1939TpTxPg</td><td><span class="i18n-fr">Parameter Group en émission</span><span class="i18n-en">Transmit Parameter Group</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-init">BAM</span> <span class="i18n-fr">Configuration J1939Tp BAM &amp; séquence de transport</span><span class="i18n-en">J1939Tp BAM Configuration &amp; Transport Sequence</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;J1939TP-CHANNEL&gt;
+  &lt;SHORT-NAME&gt;
+    J1939TpCh_BAM
+  &lt;/SHORT-NAME&gt;
+  &lt;J1939TP-PROTOCOL&gt;BAM&lt;/J1939TP-PROTOCOL&gt;
+&lt;/J1939TP-CHANNEL&gt;
+
+&lt;J1939TP-TX-PG&gt;
+  &lt;SHORT-NAME&gt;
+    TxPg_EngineConfig
+  &lt;/SHORT-NAME&gt;
+  &lt;J1939TP-PGN&gt;65251&lt;/J1939TP-PGN&gt;
+  &lt;J1939TP-CHANNEL-REF&gt;
+    J1939TpCh_BAM
+  &lt;/J1939TP-CHANNEL-REF&gt;
+  &lt;J1939TP-DATA-LENGTH&gt;
+    39  &lt;!-- &gt; 8 bytes → multi-frame --&gt;
+  &lt;/J1939TP-DATA-LENGTH&gt;
+&lt;/J1939TP-TX-PG&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — J1939 BAM Sequence</span>
+<pre><code>/* BAM TX sequence for PGN 65251
+ * (Engine Configuration, 39 bytes):
+ *
+ * 1. J1939Tp sends TP.CM_BAM:
+ *    PGN=0x00EC00 (TP.CM)
+ *    Byte1: 0x20 (BAM control)
+ *    Byte2-3: total size (39)
+ *    Byte4: num packets (6)
+ *    Byte5: 0xFF
+ *    Byte6-8: PGN 65251
+ *
+ * 2. J1939Tp sends TP.DT packets:
+ *    PGN=0x00EB00 (TP.DT)
+ *    Packet 1: SN=1, 7 bytes data
+ *    Packet 2: SN=2, 7 bytes data
+ *    ...
+ *    Packet 6: SN=6, 4 bytes + pad
+ *
+ * 3. Inter-packet delay: 50-200 ms
+ *
+ * No acknowledgment in BAM mode
+ * (broadcast to all nodes).
+ */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Utilisez le mode <strong>CMDT</strong> pour les messages point-à-point critiques (avec acquittement). Le mode BAM est réservé aux broadcasts. Respectez les délais inter-paquets J1939 (50-200 ms) pour ne pas surcharger le bus.</span><span class="i18n-en"><strong>Tip:</strong> Use <strong>CMDT</strong> mode for critical point-to-point messages (with acknowledgment). BAM mode is reserved for broadcasts. Respect J1939 inter-packet delays (50-200 ms) to avoid bus overload.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="cantp.html" class="prev">← CanTp</a>
+        <a href="index.html" class="next"><span class="i18n-fr">Tous les modules →</span><span class="i18n-en">All Modules →</span></a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

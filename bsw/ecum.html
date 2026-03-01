@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — EcuM | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR EcuM — ECU State Manager">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">EcuM — Gestionnaire d'État ECU</span><span class="i18n-en">EcuM — ECU State Manager</span></h1>
+    <p><span class="i18n-fr">Orchestre les phases de démarrage (STARTUP), fonctionnement (RUN / POST_RUN) et arrêt (SHUTDOWN / SLEEP) de l'unité de contrôle électronique.</span><span class="i18n-en">Orchestrates the startup (STARTUP), run (RUN / POST_RUN) and shutdown (SHUTDOWN / SLEEP) phases of the electronic control unit.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Couche Services</span><span class="i18n-en">Services Layer</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="com.html">Com</a></li>
+        <li><a href="comm.html">ComM</a></li>
+        <li><a href="nm.html">Nm</a></li>
+        <li><a href="ecum.html" class="active">EcuM</a></li>
+        <li><a href="bswwm.html">BswM</a></li>
+        <li><a href="dcm.html">Dcm</a></li>
+        <li><a href="dem.html">Dem</a></li>
+        <li><a href="nvm.html">NvM</a></li>
+        <li><a href="wdgM.html">WdgM</a></li>
+        <li><a href="os.html">OS</a></li>
+        <li><a href="rte.html">RTE</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">L'<strong>EcuM</strong> gère le cycle de vie de l'ECU. Il initialise le Mcu, le BswM et l'OS au démarrage, coordonne la séquence de shutdown (NvM_WriteAll, ComM déactivation) et configure les sources de wakeup pour les modes sleep.</span><span class="i18n-en"><strong>EcuM</strong> manages the ECU lifecycle. It initializes Mcu, BswM and OS at startup, coordinates the shutdown sequence (NvM_WriteAll, ComM deactivation) and configures wakeup sources for sleep modes.</span></p>
+
+      <h3><span class="i18n-fr">Dépendances principales</span><span class="i18n-en">Key Dependencies</span></h3>
+      <ul>
+        <li><strong>Mcu</strong> — <span class="i18n-fr">initialisation des clocks et du reset</span><span class="i18n-en">clock and reset initialization</span></li>
+        <li><strong>BswM</strong> — <span class="i18n-fr">arbitrage des modes</span><span class="i18n-en">mode arbitration</span></li>
+        <li><strong>OS</strong> — <span class="i18n-fr">démarrage / arrêt de l'ordonnanceur</span><span class="i18n-en">scheduler start / stop</span></li>
+        <li><strong>NvM</strong> — <span class="i18n-fr">ReadAll au démarrage, WriteAll au shutdown</span><span class="i18n-en">ReadAll at startup, WriteAll at shutdown</span></li>
+      </ul>
+
+      <h2 id="config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></h2>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Conteneur</span><span class="i18n-en">Container</span></th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>EcuMConfiguration</td><td><span class="i18n-fr">Configuration globale (sleep modes, shutdown target)</span><span class="i18n-en">Global config (sleep modes, shutdown target)</span></td></tr>
+          <tr><td>EcuMWakeupSource</td><td><span class="i18n-fr">Sources de wakeup (CAN, LIN, GPT…)</span><span class="i18n-en">Wakeup sources (CAN, LIN, GPT…)</span></td></tr>
+          <tr><td>EcuMSleepMode</td><td><span class="i18n-fr">Modes sleep et Mcu mode associé</span><span class="i18n-en">Sleep modes and associated Mcu mode</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-init">Startup</span> <span class="i18n-fr">Wakeup Source &amp; callouts EcuM</span><span class="i18n-en">Wakeup Source &amp; EcuM Callouts</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Configuration d'une source de wakeup CAN en ARXML et implémentation des callouts EcuM en C (séquence de démarrage).</span><span class="i18n-en">CAN wakeup source configuration in ARXML and EcuM callout implementation in C (startup sequence).</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;ECUM-WAKEUP-SOURCE&gt;
+  &lt;SHORT-NAME&gt;
+    WkSrc_CAN0
+  &lt;/SHORT-NAME&gt;
+  &lt;ECUM-WAKEUP-SOURCE-ID&gt;
+    0
+  &lt;/ECUM-WAKEUP-SOURCE-ID&gt;
+  &lt;ECUM-VALIDATION-TIMEOUT&gt;
+    0.010  &lt;!-- 10 ms --&gt;
+  &lt;/ECUM-VALIDATION-TIMEOUT&gt;
+&lt;/ECUM-WAKEUP-SOURCE&gt;
+
+&lt;ECUM-SLEEP-MODE&gt;
+  &lt;SHORT-NAME&gt;SleepMode_CAN&lt;/SHORT-NAME&gt;
+  &lt;MCU-MODE-REF&gt;
+    McuMode_Stop
+  &lt;/MCU-MODE-REF&gt;
+  &lt;ECUM-WAKEUP-SOURCE-REFS&gt;
+    &lt;ECUM-WAKEUP-SOURCE-REF&gt;
+      WkSrc_CAN0
+    &lt;/ECUM-WAKEUP-SOURCE-REF&gt;
+  &lt;/ECUM-WAKEUP-SOURCE-REFS&gt;
+&lt;/ECUM-SLEEP-MODE&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — EcuM Callouts</span>
+<pre><code>#include "EcuM.h"
+#include "Mcu.h"
+#include "BswM.h"
+
+/* Called by EcuM during STARTUP */
+void EcuM_AL_DriverInitOne(
+  const EcuM_ConfigType* Config)
+{
+  /* 1. Init MCU clocks */
+  Mcu_Init(Config-&gt;McuConfig);
+  Mcu_InitClock(McuClockSetting_PLL);
+
+  /* 2. Wait PLL lock */
+  while (
+    Mcu_GetPllStatus() != MCU_PLL_LOCKED
+  ) {}
+
+  Mcu_DistributePllClock();
+
+  /* 3. Init Port, DIO, etc. */
+  Port_Init(Config-&gt;PortConfig);
+  Dio_Init(Config-&gt;DioConfig);
+}
+
+/* Wakeup validation callback */
+void EcuM_CheckValidation(
+  EcuM_WakeupSourceType src)
+{
+  if (src &amp; ECUM_WKSRC_CAN0) {
+    /* Validate CAN wakeup frame */
+    EcuM_ValidateWakeupEvent(
+      ECUM_WKSRC_CAN0
+    );
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> La séquence d'initialisation des drivers (callout <code>EcuM_AL_DriverInitOne/Two/Three</code>) doit respecter l'ordre de dépendance des modules. Testez les sources de wakeup en conditions réelles (partial networking, bus idle timeout).</span><span class="i18n-en"><strong>Tip:</strong> The driver initialization sequence (callout <code>EcuM_AL_DriverInitOne/Two/Three</code>) must respect module dependency order. Test wakeup sources under real conditions (partial networking, bus idle timeout).</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="nm.html" class="prev">← Nm</a>
+        <a href="bswwm.html" class="next">BswM →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

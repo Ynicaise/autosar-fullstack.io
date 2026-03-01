@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Can | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Can Driver — MCAL CAN Controller">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Can — Driver CAN</span><span class="i18n-en">Can — CAN Driver</span></h1>
+    <p><span class="i18n-fr">Driver MCAL du contrôleur CAN : configuration des baudrates, gestion des mailboxes hardware, transmission / réception de trames et interruptions CAN.</span><span class="i18n-en">CAN controller MCAL driver: baudrate configuration, hardware mailbox management, frame transmission / reception and CAN interrupts.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html" class="active">Can</a></li>
+        <li><a href="lin.html">Lin</a></li>
+        <li><a href="fr.html">Fr</a></li>
+        <li><a href="eth.html">Eth</a></li>
+        <li><a href="spi.html">Spi</a></li>
+        <li><a href="adc.html">Adc</a></li>
+        <li><a href="dio.html">Dio</a></li>
+        <li><a href="pwm.html">Pwm</a></li>
+        <li><a href="icu.html">Icu</a></li>
+        <li><a href="gpt.html">Gpt</a></li>
+        <li><a href="port.html">Port</a></li>
+        <li><a href="fls.html">Fls</a></li>
+        <li><a href="wdg.html">Wdg</a></li>
+        <li><a href="mcu.html">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le driver <strong>Can</strong> contrôle directement le(s) contrôleur(s) CAN du MCU. Il gère l'initialisation des registres hardware, la configuration du baudrate (classic CAN 500 kbit/s ou CAN-FD jusqu'à 8 Mbit/s), les mailboxes TX/RX et les interruptions de transmission, réception et bus-off.</span><span class="i18n-en">The <strong>Can</strong> driver directly controls the MCU's CAN controller(s). It manages hardware register initialization, baudrate configuration (classic CAN 500 kbit/s or CAN-FD up to 8 Mbit/s), TX/RX mailboxes and transmission, reception and bus-off interrupts.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">Controller</span> <span class="i18n-fr">CAN Controller &amp; Can_Write</span><span class="i18n-en">CAN Controller &amp; Can_Write</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;CAN-CONTROLLER-CONFIGURATION&gt;
+  &lt;SHORT-NAME&gt;
+    CanController_0
+  &lt;/SHORT-NAME&gt;
+  &lt;CAN-CONTROLLER-BAUDRATE&gt;
+    &lt;CAN-BAUDRATE&gt;500&lt;/CAN-BAUDRATE&gt;
+    &lt;PROP-SEG&gt;5&lt;/PROP-SEG&gt;
+    &lt;PHASE-SEG1&gt;5&lt;/PHASE-SEG1&gt;
+    &lt;PHASE-SEG2&gt;4&lt;/PHASE-SEG2&gt;
+    &lt;SJW&gt;2&lt;/SJW&gt;
+    &lt;PRESCALER&gt;4&lt;/PRESCALER&gt;
+  &lt;/CAN-CONTROLLER-BAUDRATE&gt;
+  &lt;CAN-CONTROLLER-FD-BAUDRATE&gt;
+    &lt;CAN-FD-BAUDRATE&gt;
+      2000
+    &lt;/CAN-FD-BAUDRATE&gt;
+    &lt;FD-PRESCALER&gt;1&lt;/FD-PRESCALER&gt;
+  &lt;/CAN-CONTROLLER-FD-BAUDRATE&gt;
+&lt;/CAN-CONTROLLER-CONFIGURATION&gt;
+
+&lt;CAN-HARDWARE-OBJECT&gt;
+  &lt;SHORT-NAME&gt;HOH_Tx_0&lt;/SHORT-NAME&gt;
+  &lt;CAN-OBJECT-TYPE&gt;
+    TRANSMIT
+  &lt;/CAN-OBJECT-TYPE&gt;
+  &lt;CAN-HANDLE-TYPE&gt;
+    BASIC
+  &lt;/CAN-HANDLE-TYPE&gt;
+&lt;/CAN-HARDWARE-OBJECT&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Can_Write &amp; ISR</span>
+<pre><code>#include "Can.h"
+
+/* Can_Write called by CanIf */
+Can_ReturnType result;
+Can_PduType pdu;
+
+pdu.id     = 0x123U;
+pdu.length = 8U;
+pdu.sdu    = txData;
+pdu.swPduHandle = txPduHandle;
+
+result = Can_Write(HOH_Tx_0, &amp;pdu);
+/* CAN_OK    → placed in mailbox
+ * CAN_BUSY  → no mailbox free
+ * CAN_NOT_OK → error */
+
+/* CAN RX ISR (generated) */
+void Can_0_RxIsr(void)
+{
+  /* 1. Read CAN ID, DLC, data
+   *    from hardware mailbox
+   * 2. Call CanIf_RxIndication(
+   *      Hrh, CanId, DLC, data)
+   * 3. Clear interrupt flag
+   */
+}
+
+/* Bus-off ISR */
+void Can_0_BusOffIsr(void)
+{
+  CanIf_ControllerBusOff(
+    CAN_CONTROLLER_0);
+  /* CanSM → ComM: NO_COM */
+}</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Calculez les segments de temps (PROP, TSEG1, TSEG2, SJW) avec un outil de calcul CAN baudrate. Un sample point à ~80% est recommandé pour un réseau 500 kbit/s. Vérifiez la compatibilité CAN-FD avec tous les nœuds du réseau avant d'activer le data baudrate élevé.</span><span class="i18n-en"><strong>Tip:</strong> Calculate time segments (PROP, TSEG1, TSEG2, SJW) with a CAN baudrate calculator tool. A sample point at ~80% is recommended for a 500 kbit/s network. Verify CAN-FD compatibility with all network nodes before enabling high data baudrate.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="index.html" class="prev"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a>
+        <a href="lin.html" class="next">Lin →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

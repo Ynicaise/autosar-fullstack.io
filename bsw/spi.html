@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Spi | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Spi Handler/Driver — MCAL SPI">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Spi — Handler/Driver SPI</span><span class="i18n-en">Spi — SPI Handler/Driver</span></h1>
+    <p><span class="i18n-fr">Driver MCAL du bus SPI : gestion des séquences, jobs, canaux, chip selects et transmission asynchrone/synchrone vers les périphériques externes (EEPROM, transceiver, ADC externe).</span><span class="i18n-en">SPI bus MCAL driver: sequence, job, channel management, chip selects and asynchronous/synchronous transmission to external peripherals (EEPROM, transceiver, external ADC).</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title">MCAL</div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="can.html">Can</a></li>
+        <li><a href="lin.html">Lin</a></li>
+        <li><a href="fr.html">Fr</a></li>
+        <li><a href="eth.html">Eth</a></li>
+        <li><a href="spi.html" class="active">Spi</a></li>
+        <li><a href="adc.html">Adc</a></li>
+        <li><a href="dio.html">Dio</a></li>
+        <li><a href="pwm.html">Pwm</a></li>
+        <li><a href="icu.html">Icu</a></li>
+        <li><a href="gpt.html">Gpt</a></li>
+        <li><a href="port.html">Port</a></li>
+        <li><a href="fls.html">Fls</a></li>
+        <li><a href="wdg.html">Wdg</a></li>
+        <li><a href="mcu.html">Mcu</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>Spi</strong> est un Handler/Driver qui gère le bus SPI du MCU. Il organise les transferts en 3 niveaux hiérarchiques : <strong>Channel</strong> (données), <strong>Job</strong> (ensemble de channels vers un chip select) et <strong>Sequence</strong> (ensemble de jobs). Il supporte les modes synchrone (polling) et asynchrone (interrupt/DMA).</span><span class="i18n-en"><strong>Spi</strong> is a Handler/Driver that manages the MCU's SPI bus. It organizes transfers in 3 hierarchical levels: <strong>Channel</strong> (data), <strong>Job</strong> (set of channels to one chip select) and <strong>Sequence</strong> (set of jobs). It supports synchronous (polling) and asynchronous (interrupt/DMA) modes.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">Sequence</span> <span class="i18n-fr">Spi Sequence &amp; transmission asynchrone</span><span class="i18n-en">Spi Sequence &amp; Async Transmission</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;SPI-SEQUENCE&gt;
+  &lt;SHORT-NAME&gt;
+    SpiSeq_ExtEeprom
+  &lt;/SHORT-NAME&gt;
+  &lt;SPI-JOB-REFS&gt;
+    &lt;SPI-JOB-REF&gt;
+      SpiJob_EepromCmd
+    &lt;/SPI-JOB-REF&gt;
+    &lt;SPI-JOB-REF&gt;
+      SpiJob_EepromData
+    &lt;/SPI-JOB-REF&gt;
+  &lt;/SPI-JOB-REFS&gt;
+&lt;/SPI-SEQUENCE&gt;
+
+&lt;SPI-JOB&gt;
+  &lt;SHORT-NAME&gt;SpiJob_EepromCmd&lt;/SHORT-NAME&gt;
+  &lt;SPI-CS&gt;CS_EEPROM&lt;/SPI-CS&gt;
+  &lt;SPI-BAUDRATE&gt;4000000&lt;/SPI-BAUDRATE&gt;
+  &lt;SPI-CHANNELS&gt;
+    &lt;SPI-CHANNEL-REF&gt;
+      SpiCh_Command
+    &lt;/SPI-CHANNEL-REF&gt;
+  &lt;/SPI-CHANNELS&gt;
+&lt;/SPI-JOB&gt;
+
+&lt;SPI-CHANNEL&gt;
+  &lt;SHORT-NAME&gt;SpiCh_Command&lt;/SHORT-NAME&gt;
+  &lt;DATA-WIDTH&gt;8&lt;/DATA-WIDTH&gt;
+  &lt;DEFAULT-DATA&gt;0xFF&lt;/DEFAULT-DATA&gt;
+  &lt;BUFFER-TYPE&gt;IB&lt;/BUFFER-TYPE&gt;
+&lt;/SPI-CHANNEL&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Spi_AsyncTransmit</span>
+<pre><code>#include "Spi.h"
+
+/* Write data to external EEPROM */
+void Eep_WriteBlock(
+  uint16 addr, const uint8* data,
+  uint16 len)
+{
+  uint8 cmd[3];
+
+  /* Prepare WRITE command */
+  cmd[0] = 0x02U; /* WRITE opcode */
+  cmd[1] = (uint8)(addr >> 8);
+  cmd[2] = (uint8)(addr);
+
+  /* Setup channels */
+  Spi_SetupEB(
+    SpiConf_Ch_Command,
+    cmd, NULL_PTR, 3U);
+  Spi_SetupEB(
+    SpiConf_Ch_Data,
+    data, NULL_PTR, len);
+
+  /* Start async sequence
+   * (DMA + interrupts) */
+  Spi_AsyncTransmit(
+    SpiConf_Seq_ExtEeprom);
+
+  /* Spi_MainFunction() or ISR
+   * completes → notification */
+}
+
+/* Check completion */
+Spi_SeqResultType res =
+  Spi_GetSequenceResult(
+    SpiConf_Seq_ExtEeprom);
+/* SPI_SEQ_OK / SPI_SEQ_PENDING
+ * / SPI_SEQ_FAILED */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Utilisez les External Buffers (<code>EB</code>) pour les gros transferts (pas de copie) et les Internal Buffers (<code>IB</code>) pour les petits commandes. Configurez les priorités de jobs pour éviter les conflits d'accès au bus SPI entre l'EEPROM et le transceiver CAN.</span><span class="i18n-en"><strong>Tip:</strong> Use External Buffers (<code>EB</code>) for large transfers (no copy) and Internal Buffers (<code>IB</code>) for small commands. Configure job priorities to avoid SPI bus access conflicts between the EEPROM and CAN transceiver.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="eth.html" class="prev">← Eth</a>
+        <a href="adc.html" class="next">Adc →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

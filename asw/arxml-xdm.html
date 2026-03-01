@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASW — ARXML, XDM &amp; RTE | autosar-fullstack.dev</title>
+  <meta name="description" content="ARXML, XDM et mapping RTE AUTOSAR — format d'échange, modélisation de données, génération et communication RTE.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="introduction.html" class="active">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="introduction.html">Introduction</a></li>
+          <li><a href="swc.html">SWC</a></li>
+          <li><a href="cdd.html">CDD</a></li>
+          <li><a href="arxml-xdm.html" class="active">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="../bsw/com.html">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span>
+      <span class="lang-sep"></span>
+      <span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="module-header">
+  <div class="container">
+    <div class="breadcrumb"><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a> / <a href="introduction.html">ASW</a> / <strong>ARXML / XDM / RTE</strong></div>
+    <h1><span class="i18n-fr"><span>ARXML</span>, XDM &amp; Mapping RTE</span><span class="i18n-en"><span>ARXML</span>, XDM &amp; RTE Mapping</span></h1>
+    <div class="module-meta">
+      <span class="module-meta-item">ARXML</span>
+      <span class="module-meta-item"><span class="i18n-fr">Modélisation XDM</span><span class="i18n-en">XDM Modeling</span></span>
+      <span class="module-meta-item"><span class="i18n-fr">Mapping RTE</span><span class="i18n-en">RTE Mapping</span></span>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar" style="max-width:none;padding:0;">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Pages ASW</span><span class="i18n-en">ASW Pages</span></div>
+      <ul class="sidebar-links">
+        <li><a href="introduction.html">Introduction</a></li>
+        <li><a href="swc.html">SWC</a></li>
+        <li><a href="cdd.html">CDD</a></li>
+        <li><a href="arxml-xdm.html" class="active">ARXML / XDM</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#arxml"><span class="i18n-fr">Explication ARXML</span><span class="i18n-en">ARXML Explained</span></a></li>
+        <li><a href="#arxml-elements"><span class="i18n-fr">Éléments clés</span><span class="i18n-en">Key Elements</span></a></li>
+        <li><a href="#arxml-example"><span class="i18n-fr">Exemple de code</span><span class="i18n-en">Code Example</span></a></li>
+        <li><a href="#xdm"><span class="i18n-fr">Modélisation XDM</span><span class="i18n-en">XDM Modeling</span></a></li>
+        <li><a href="#rte"><span class="i18n-fr">Mapping RTE</span><span class="i18n-en">RTE Mapping</span></a></li>
+        <li><a href="#rte-patterns"><span class="i18n-fr">Patterns de communication</span><span class="i18n-en">Communication Patterns</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+
+      <h2 id="arxml"><span class="i18n-fr">Explication ARXML</span><span class="i18n-en">ARXML Explained</span></h2>
+      <p><span class="i18n-fr"><strong>ARXML</strong> (AUTOSAR XML) est le format d'échange standardisé pour toutes les données de configuration et de conception AUTOSAR. Chaque élément d'un système AUTOSAR — des types de données aux descriptions de SWC en passant par les configurations de modules BSW — est décrit dans des fichiers ARXML.</span><span class="i18n-en"><strong>ARXML</strong> (AUTOSAR XML) is the standardized exchange format for all AUTOSAR configuration and design data. Every element in an AUTOSAR system — from data types to SWC descriptions to BSW module configurations — is described in ARXML files.</span></p>
+
+      <h3 id="arxml-elements"><span class="i18n-fr">Éléments clés ARXML</span><span class="i18n-en">Key ARXML Elements</span></h3>
+      <table>
+        <thead>
+          <tr><th><span class="i18n-fr">Élément</span><span class="i18n-en">Element</span></th><th><span class="i18n-fr">Objectif</span><span class="i18n-en">Purpose</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>AR-PACKAGE</code></td><td><span class="i18n-fr">Conteneur d'espace de noms pour organiser les éléments</span><span class="i18n-en">Namespace container for organizing elements</span></td></tr>
+          <tr><td><code>APPLICATION-SW-COMPONENT-TYPE</code></td><td><span class="i18n-fr">Définition du type SWC avec ses ports</span><span class="i18n-en">SWC type definition with ports</span></td></tr>
+          <tr><td><code>SENDER-RECEIVER-INTERFACE</code></td><td><span class="i18n-fr">Définition d'interface de port S/R</span><span class="i18n-en">S/R port interface definition</span></td></tr>
+          <tr><td><code>CLIENT-SERVER-INTERFACE</code></td><td><span class="i18n-fr">Définition d'interface de port C/S</span><span class="i18n-en">C/S port interface definition</span></td></tr>
+          <tr><td><code>SWC-INTERNAL-BEHAVIOR</code></td><td><span class="i18n-fr">Runnables, événements, zones exclusives</span><span class="i18n-en">Runnables, events, exclusive areas</span></td></tr>
+          <tr><td><code>SYSTEM-MAPPING</code></td><td><span class="i18n-fr">Allocation SWC vers ECU</span><span class="i18n-en">SWC-to-ECU allocation</span></td></tr>
+          <tr><td><code>IMPLEMENTATION-DATA-TYPE</code></td><td><span class="i18n-fr">Mapping des types de données C</span><span class="i18n-en">C-level data type mapping</span></td></tr>
+          <tr><td><code>COMPOSITION-SW-COMPONENT-TYPE</code></td><td><span class="i18n-fr">Agrégation hiérarchique de SWC</span><span class="i18n-en">Hierarchical SWC aggregation</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="arxml-example"><span class="i18n-fr">Exemple : définition de port SWC</span><span class="i18n-en">Example: SWC Port Definition</span></h3>
+<pre><code>&lt;APPLICATION-SW-COMPONENT-TYPE&gt;
+  &lt;SHORT-NAME&gt;MyControlSWC&lt;/SHORT-NAME&gt;
+  &lt;PORTS&gt;
+    &lt;R-PORT-PROTOTYPE&gt;
+      &lt;SHORT-NAME&gt;SensorInput&lt;/SHORT-NAME&gt;
+      &lt;REQUIRED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE"&gt;
+        /Interfaces/SensorDataIf
+      &lt;/REQUIRED-INTERFACE-TREF&gt;
+    &lt;/R-PORT-PROTOTYPE&gt;
+    &lt;P-PORT-PROTOTYPE&gt;
+      &lt;SHORT-NAME&gt;ActuatorOutput&lt;/SHORT-NAME&gt;
+      &lt;PROVIDED-INTERFACE-TREF DEST="SENDER-RECEIVER-INTERFACE"&gt;
+        /Interfaces/ActuatorCmdIf
+      &lt;/PROVIDED-INTERFACE-TREF&gt;
+    &lt;/P-PORT-PROTOTYPE&gt;
+  &lt;/PORTS&gt;
+&lt;/APPLICATION-SW-COMPONENT-TYPE&gt;</code></pre>
+
+      <h2 id="xdm"><span class="i18n-fr">Modélisation XDM</span><span class="i18n-en">XDM Modeling</span></h2>
+      <p><span class="i18n-fr">L'approche <strong>XDM (XML Data Model)</strong> définit la structure et les contraintes des paramètres de configuration des modules AUTOSAR. Elle agit comme le schéma que les outils utilisent pour valider et générer la configuration ARXML.</span><span class="i18n-en">The <strong>XDM (XML Data Model)</strong> approach defines the structure and constraints for AUTOSAR module configuration parameters. It acts as the schema that tools use to validate and generate ARXML configuration.</span></p>
+
+      <h3><span class="i18n-fr">Concepts fondamentaux XDM</span><span class="i18n-en">XDM Core Concepts</span></h3>
+      <ul>
+        <li><span class="i18n-fr"><strong>Containers</strong> — Éléments de regroupement contenant des paramètres (ex. : <code>ComSignal</code>, <code>CanIfChannel</code>)</span><span class="i18n-en"><strong>Containers</strong> — Grouping elements that hold parameters (e.g., <code>ComSignal</code>, <code>CanIfChannel</code>)</span></li>
+        <li><span class="i18n-fr"><strong>Paramètres</strong> — Valeurs typées : entiers, flottants, booléens, énumérations, chaînes</span><span class="i18n-en"><strong>Parameters</strong> — Typed values: integers, floats, booleans, enumerations, strings</span></li>
+        <li><span class="i18n-fr"><strong>Références</strong> — Liens entre containers (ex. : un signal référençant un PDU)</span><span class="i18n-en"><strong>References</strong> — Links between containers (e.g., a signal referencing a PDU)</span></li>
+        <li><span class="i18n-fr"><strong>Multiplicité</strong> — Contraintes de cardinalité (ex. : exactement un <code>EcuMConfig</code>, 0..* <code>ComIPdu</code>)</span><span class="i18n-en"><strong>Multiplicity</strong> — Cardinality constraints (e.g., exactly one <code>EcuMConfig</code>, 0..* <code>ComIPdu</code>)</span></li>
+      </ul>
+
+      <h3><span class="i18n-fr">Workflow basé sur XDM</span><span class="i18n-en">XDM-Based Workflow</span></h3>
+      <ol>
+        <li><span class="i18n-fr">Définir le schéma XDM pour chaque module BSW (définition des paramètres)</span><span class="i18n-en">Define the XDM schema for each BSW module (parameter definition)</span></li>
+        <li><span class="i18n-fr">Utiliser le schéma pour instancier les configurations en ARXML</span><span class="i18n-en">Use the schema to instantiate configurations in ARXML</span></li>
+        <li><span class="i18n-fr">Valider l'ARXML par rapport aux contraintes XDM</span><span class="i18n-en">Validate the ARXML against XDM constraints</span></li>
+        <li><span class="i18n-fr">Générer le code C à partir de la configuration validée</span><span class="i18n-en">Generate C code from the validated configuration</span></li>
+      </ol>
+
+      <div class="info-box">
+        <span class="i18n-fr"><strong>Note :</strong> Le XDM est défini par le standard AUTOSAR dans la description des modules BSW. Les outils des fournisseurs (ex. : EB tresos, Vector DaVinci) utilisent le XDM pour fournir des éditeurs de configuration guidés.</span><span class="i18n-en"><strong>Note:</strong> XDM is defined by the AUTOSAR standard in the BSW Module Description. Vendor tools (e.g., EB tresos, Vector DaVinci) use XDM to provide guided configuration editors.</span>
+      </div>
+
+      <h2 id="rte"><span class="i18n-fr">Mapping RTE</span><span class="i18n-en">RTE Mapping</span></h2>
+      <p><span class="i18n-fr">Le <strong>RTE (Runtime Environment)</strong> est une couche générée qui fournit l'infrastructure de communication entre les SWC et entre les SWC et les modules BSW. Le mapping RTE est le processus de connexion des ports, de mapping des runnables aux tâches et de définition du flux de données.</span><span class="i18n-en">The <strong>RTE (Runtime Environment)</strong> is a generated layer that provides the communication infrastructure between SWCs and between SWCs and BSW modules. RTE mapping is the process of connecting ports, mapping runnables to tasks, and defining the data flow.</span></p>
+
+      <h3><span class="i18n-fr">Étapes du mapping RTE</span><span class="i18n-en">RTE Mapping Steps</span></h3>
+      <ol>
+        <li><span class="i18n-fr"><strong>Connexion des ports</strong> — Connecter les PPort aux RPort entre SWC dans la composition</span><span class="i18n-en"><strong>Port Connection</strong> — Connect PPort to RPort between SWCs in the composition</span></li>
+        <li><span class="i18n-fr"><strong>Mapping des données</strong> — Mapper les éléments de données S/R aux chemins de signaux spécifiques</span><span class="i18n-en"><strong>Data Mapping</strong> — Map S/R data elements to specific signal paths</span></li>
+        <li><span class="i18n-fr"><strong>Mapping des tâches</strong> — Assigner chaque runnable à une tâche OS avec un ordonnancement adapté</span><span class="i18n-en"><strong>Task Mapping</strong> — Assign each runnable to an OS task with appropriate scheduling</span></li>
+        <li><span class="i18n-fr"><strong>Mapping des zones exclusives</strong> — Définir la stratégie de protection de concurrence (verrou d'interruption, verrou de tâche, ressource OS)</span><span class="i18n-en"><strong>Exclusive Area Mapping</strong> — Define concurrency protection strategy (interrupt lock, task lock, OS resource)</span></li>
+        <li><span class="i18n-fr"><strong>Génération RTE</strong> — Générer les fichiers Rte.c / Rte.h à partir du mapping complet</span><span class="i18n-en"><strong>RTE Generation</strong> — Generate the Rte.c / Rte.h files from the complete mapping</span></li>
+      </ol>
+
+      <h3 id="rte-patterns"><span class="i18n-fr">Patterns de communication via RTE</span><span class="i18n-en">Communication Patterns via RTE</span></h3>
+      <table>
+        <thead>
+          <tr><th>Pattern</th><th><span class="i18n-fr">Flux de données</span><span class="i18n-en">Data Flow</span></th><th><span class="i18n-fr">Bloquant</span><span class="i18n-en">Blocking</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="i18n-fr">Lecture S/R implicite</span><span class="i18n-en">Implicit S/R Read</span></td><td><span class="i18n-fr">Copie au début de la tâche</span><span class="i18n-en">Copy at task start</span></td><td><span class="i18n-fr">Non</span><span class="i18n-en">No</span></td></tr>
+          <tr><td><span class="i18n-fr">Lecture S/R explicite</span><span class="i18n-en">Explicit S/R Read</span></td><td><span class="i18n-fr">Copie à l'appel API</span><span class="i18n-en">Copy on API call</span></td><td><span class="i18n-fr">Non</span><span class="i18n-en">No</span></td></tr>
+          <tr><td><span class="i18n-fr">Écriture S/R implicite</span><span class="i18n-en">Implicit S/R Write</span></td><td><span class="i18n-fr">Copie à la fin de la tâche</span><span class="i18n-en">Copy at task end</span></td><td><span class="i18n-fr">Non</span><span class="i18n-en">No</span></td></tr>
+          <tr><td><span class="i18n-fr">Écriture S/R explicite</span><span class="i18n-en">Explicit S/R Write</span></td><td><span class="i18n-fr">Copie à l'appel API</span><span class="i18n-en">Copy on API call</span></td><td><span class="i18n-fr">Non</span><span class="i18n-en">No</span></td></tr>
+          <tr><td><span class="i18n-fr">C/S synchrone</span><span class="i18n-en">Synchronous C/S</span></td><td><span class="i18n-fr">Appel de fonction direct</span><span class="i18n-en">Direct function call</span></td><td><span class="i18n-fr">Oui</span><span class="i18n-en">Yes</span></td></tr>
+          <tr><td><span class="i18n-fr">C/S asynchrone</span><span class="i18n-en">Asynchronous C/S</span></td><td><span class="i18n-fr">Requête en file d'attente</span><span class="i18n-en">Queued request</span></td><td><span class="i18n-fr">Non</span><span class="i18n-en">No</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="info-box warning">
+        <span class="i18n-fr"><strong>Erreur courante :</strong> Oublier de mapper les zones exclusives pour les runnables partageant des données entre différentes tâches. Cela provoque des conditions de course difficiles à déboguer sur le hardware cible.</span><span class="i18n-en"><strong>Common Mistake:</strong> Forgetting to map exclusive areas for runnables sharing data across different tasks. This leads to race conditions that are hard to debug on target hardware.</span>
+      </div>
+
+      <div class="mt-4" style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <a href="cdd.html" class="btn btn-outline"><span class="i18n-fr">← CDD</span><span class="i18n-en">← CDD</span></a>
+        <a href="../bsw/com.html" class="btn btn-primary"><span class="i18n-fr">Explorer les modules BSW →</span><span class="i18n-en">Explore BSW Modules →</span></a>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2026 autosar-fullstack.dev — Yann Nicaise. <span class="i18n-fr">Conçu en pur HTML, CSS &amp; JS.</span><span class="i18n-en">Built with pure HTML, CSS &amp; JS.</span></p>
+  </div>
+</footer>
+
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

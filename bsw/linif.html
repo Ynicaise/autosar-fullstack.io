@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — LinIf | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR LinIf — LIN Interface">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">LinIf — Interface LIN</span><span class="i18n-en">LinIf — LIN Interface</span></h1>
+    <p><span class="i18n-fr">Gestion du schedule LIN, transmission / réception des trames et contrôle du mode sleep / wakeup des nœuds LIN.</span><span class="i18n-en">LIN schedule management, frame transmission / reception and LIN node sleep / wakeup mode control.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Abstraction ECU</span><span class="i18n-en">ECU Abstraction</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="canif.html">CanIf</a></li>
+        <li><a href="linif.html" class="active">LinIf</a></li>
+        <li><a href="frif.html">FrIf</a></li>
+        <li><a href="ethif.html">EthIf</a></li>
+        <li><a href="fee.html">Fee</a></li>
+        <li><a href="ea.html">Ea</a></li>
+        <li><a href="iohwab.html">IoHwAb</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>LinIf</strong> gère les schedule tables LIN (ordonnancement des trames), le mapping des PDUs sur les trames LIN et les transitions de mode (RUN / SLEEP / WAKEUP). Il supporte le rôle Master et coordonne les esclaves via le schedule.</span><span class="i18n-en"><strong>LinIf</strong> manages LIN schedule tables (frame scheduling), PDU-to-LIN-frame mapping and mode transitions (RUN / SLEEP / WAKEUP). It supports the Master role and coordinates slaves via the schedule.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">Schedule</span> <span class="i18n-fr">LinIf Schedule Table &amp; switch de schedule</span><span class="i18n-en">LinIf Schedule Table &amp; Schedule Switch</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;LINIF-CHANNEL&gt;
+  &lt;SHORT-NAME&gt;LinIfCh_0&lt;/SHORT-NAME&gt;
+  &lt;LINIF-SCHEDULE-TABLES&gt;
+    &lt;LINIF-SCHEDULE-TABLE&gt;
+      &lt;SHORT-NAME&gt;
+        Schedule_Normal
+      &lt;/SHORT-NAME&gt;
+      &lt;LINIF-ENTRIES&gt;
+        &lt;LINIF-ENTRY&gt;
+          &lt;DELAY&gt;0.01&lt;/DELAY&gt;
+          &lt;LINIF-FRAME-REF&gt;
+            LinFrame_Sensors
+          &lt;/LINIF-FRAME-REF&gt;
+        &lt;/LINIF-ENTRY&gt;
+        &lt;LINIF-ENTRY&gt;
+          &lt;DELAY&gt;0.01&lt;/DELAY&gt;
+          &lt;LINIF-FRAME-REF&gt;
+            LinFrame_Actuators
+          &lt;/LINIF-FRAME-REF&gt;
+        &lt;/LINIF-ENTRY&gt;
+      &lt;/LINIF-ENTRIES&gt;
+    &lt;/LINIF-SCHEDULE-TABLE&gt;
+  &lt;/LINIF-SCHEDULE-TABLES&gt;
+&lt;/LINIF-CHANNEL&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Schedule Switch</span>
+<pre><code>#include "LinIf.h"
+
+/* Switch to diagnostic schedule
+ * when Dcm needs LIN diagnostic */
+void SwitchToDiagSchedule(void)
+{
+  LinIf_ScheduleRequest(
+    LinIfConf_Channel_0,
+    LinIfConf_Schedule_Diag
+  );
+}
+
+/* Return to normal schedule */
+void SwitchToNormalSchedule(void)
+{
+  LinIf_ScheduleRequest(
+    LinIfConf_Channel_0,
+    LinIfConf_Schedule_Normal
+  );
+}
+
+/* LinIf_MainFunction() executes
+ * the current schedule:
+ * - Sends header for each entry
+ * - Lin driver handles sync + PID
+ * - Slave responds with data
+ * - LinIf notifies PduR
+ */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Prévoyez un schedule dédié au diagnostic LIN (MRF/SRF) que BswM active sur demande Dcm. Les délais du schedule doivent être calibrés pour éviter le jitter sur les réponses esclaves.</span><span class="i18n-en"><strong>Tip:</strong> Plan a dedicated LIN diagnostic schedule (MRF/SRF) that BswM activates on Dcm request. Schedule delays must be calibrated to avoid jitter on slave responses.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="canif.html" class="prev">← CanIf</a>
+        <a href="frif.html" class="next">FrIf →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Ea | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Ea — EEPROM Abstraction">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Ea — Abstraction EEPROM</span><span class="i18n-en">Ea — EEPROM Abstraction</span></h1>
+    <p><span class="i18n-fr">Abstraction de l'EEPROM externe : gestion des blocs logiques, accès byte-level et interface MemIf vers le NvM.</span><span class="i18n-en">External EEPROM abstraction: logical block management, byte-level access and MemIf interface to NvM.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Abstraction ECU</span><span class="i18n-en">ECU Abstraction</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="canif.html">CanIf</a></li>
+        <li><a href="linif.html">LinIf</a></li>
+        <li><a href="frif.html">FrIf</a></li>
+        <li><a href="ethif.html">EthIf</a></li>
+        <li><a href="fee.html">Fee</a></li>
+        <li><a href="ea.html" class="active">Ea</a></li>
+        <li><a href="iohwab.html">IoHwAb</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">L'<strong>Ea</strong> gère l'accès aux blocs de données stockés dans une EEPROM externe (SPI/I²C). Contrairement au Fee (Flash), l'Ea n'a pas besoin de wear leveling car l'EEPROM supporte nativement l'écriture par octet. Il expose l'interface <code>MemIf</code> standard vers le NvM, en parallèle du Fee.</span><span class="i18n-en"><strong>Ea</strong> manages data block access stored in an external EEPROM (SPI/I²C). Unlike Fee (Flash), Ea doesn't need wear leveling since EEPROM natively supports byte-level writes. It exposes the standard <code>MemIf</code> interface to NvM, alongside Fee.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-init">Block</span> <span class="i18n-fr">Ea Block &amp; lecture asynchrone</span><span class="i18n-en">Ea Block &amp; Asynchronous Read</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;EA-BLOCK-CONFIGURATION&gt;
+  &lt;SHORT-NAME&gt;
+    EaBlock_SerialNumber
+  &lt;/SHORT-NAME&gt;
+  &lt;BLOCK-NUMBER&gt;1&lt;/BLOCK-NUMBER&gt;
+  &lt;BLOCK-SIZE&gt;16&lt;/BLOCK-SIZE&gt;
+  &lt;IMMEDIATE-DATA&gt;false&lt;/IMMEDIATE-DATA&gt;
+&lt;/EA-BLOCK-CONFIGURATION&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — Ea Read / Write</span>
+<pre><code>/* NvM calls Ea via MemIf:
+ *
+ * Ea_Read(BlockNumber, Offset,
+ *         DataBufPtr, Length)
+ *
+ * Ea_MainFunction() processes:
+ *  1. Calculates EEPROM address
+ *     from logical block number
+ *  2. Calls Eep_Read() (driver)
+ *  3. Polls Eep_GetJobResult()
+ *  4. Notifies via callback
+ *
+ * Ea_Write(BlockNumber, DataBufPtr)
+ *  → Eep_Write() (byte-level)
+ *  → No erase needed (EEPROM)
+ */
+
+/* Key difference vs Fee:
+ * - No sector erase overhead
+ * - No garbage collection
+ * - Simpler but slower than Flash
+ * - Limited size (typ. 4-64 KB)
+ * - Higher endurance (1M+ cycles)
+ */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Utilisez l'Ea (EEPROM) pour les petites données à haute endurance (compteurs de cycles, paramètres de sécurité) et le Fee (Flash) pour les grandes données (calibration, DTCs). Vérifiez les temps d'écriture de l'EEPROM externe dans le datasheet.</span><span class="i18n-en"><strong>Tip:</strong> Use Ea (EEPROM) for small high-endurance data (cycle counters, security parameters) and Fee (Flash) for large data (calibration, DTCs). Check external EEPROM write times in the datasheet.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="fee.html" class="prev">← Fee</a>
+        <a href="iohwab.html" class="next">IoHwAb →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

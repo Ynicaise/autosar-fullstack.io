@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — IoHwAb | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR IoHwAb — I/O Hardware Abstraction">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown"><a href="../asw/introduction.html">ASW</a><ul class="dropdown-menu"><li><a href="../asw/introduction.html">Introduction</a></li><li><a href="../asw/swc.html">SWC</a></li><li><a href="../asw/cdd.html">CDD</a></li><li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li></ul></li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue"><span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span></button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">IoHwAb — Abstraction I/O Hardware</span><span class="i18n-en">IoHwAb — I/O Hardware Abstraction</span></h1>
+    <p><span class="i18n-fr">Couche d'abstraction entre les SWC applicatifs et les drivers MCAL (Adc, Dio, Pwm) : fournit des signaux physiques calibrés (tension, courant, état) aux SWC via le RTE.</span><span class="i18n-en">Abstraction layer between application SWCs and MCAL drivers (Adc, Dio, Pwm): provides calibrated physical signals (voltage, current, state) to SWCs via the RTE.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Abstraction ECU</span><span class="i18n-en">ECU Abstraction</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="canif.html">CanIf</a></li>
+        <li><a href="linif.html">LinIf</a></li>
+        <li><a href="frif.html">FrIf</a></li>
+        <li><a href="ethif.html">EthIf</a></li>
+        <li><a href="fee.html">Fee</a></li>
+        <li><a href="ea.html">Ea</a></li>
+        <li><a href="iohwab.html" class="active">IoHwAb</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">L'<strong>IoHwAb</strong> abstrait les I/O hardware (capteurs, actionneurs) pour les SWC applicatifs. Il convertit les valeurs brutes des drivers MCAL (ADC counts, DIO levels, PWM duty) en grandeurs physiques calibrées (tension, température, position). C'est un module <strong>ECU-spécifique</strong> — pas de standard AUTOSAR pour son contenu, seule l'interface vers le RTE est standardisée.</span><span class="i18n-en"><strong>IoHwAb</strong> abstracts hardware I/O (sensors, actuators) for application SWCs. It converts raw MCAL driver values (ADC counts, DIO levels, PWM duty) into calibrated physical quantities (voltage, temperature, position). It's an <strong>ECU-specific</strong> module — no AUTOSAR standard for its content, only the RTE interface is standardized.</span></p>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-cs">I/O</span> <span class="i18n-fr">IoHwAb Lecture capteur de température</span><span class="i18n-en">IoHwAb Temperature Sensor Read</span></div>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;!-- IoHwAb declared as an
+     ECU Abstraction SWC --&gt;
+&lt;ECU-ABSTRACTION-SW-COMPONENT-TYPE&gt;
+  &lt;SHORT-NAME&gt;IoHwAb&lt;/SHORT-NAME&gt;
+  &lt;PORTS&gt;
+    &lt;P-PORT-PROTOTYPE&gt;
+      &lt;SHORT-NAME&gt;
+        PPort_EngTemp
+      &lt;/SHORT-NAME&gt;
+      &lt;PROVIDED-INTERFACE-TREF&gt;
+        If_Temperature
+      &lt;/PROVIDED-INTERFACE-TREF&gt;
+    &lt;/P-PORT-PROTOTYPE&gt;
+  &lt;/PORTS&gt;
+  &lt;INTERNAL-BEHAVIORS&gt;
+    &lt;SWC-INTERNAL-BEHAVIOR&gt;
+      &lt;RUNNABLES&gt;
+        &lt;RUNNABLE-ENTITY&gt;
+          &lt;SHORT-NAME&gt;
+            RE_ReadSensors
+          &lt;/SHORT-NAME&gt;
+          &lt;SYMBOL&gt;
+            IoHwAb_ReadSensors
+          &lt;/SYMBOL&gt;
+        &lt;/RUNNABLE-ENTITY&gt;
+      &lt;/RUNNABLES&gt;
+    &lt;/SWC-INTERNAL-BEHAVIOR&gt;
+  &lt;/INTERNAL-BEHAVIORS&gt;
+&lt;/ECU-ABSTRACTION-SW-COMPONENT-TYPE&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — IoHwAb_ReadSensors.c</span>
+<pre><code>#include "Rte_IoHwAb.h"
+#include "Adc.h"
+
+/* ADC calibration constants */
+#define ADC_VREF     3.3f
+#define ADC_MAX      4095U
+#define TEMP_OFFSET  -40.0f
+#define TEMP_SCALE   0.1f
+
+void IoHwAb_ReadSensors(void)
+{
+  Adc_ValueGroupType adcRaw;
+  float32 voltage, tempC;
+
+  /* 1. Read raw ADC value */
+  Adc_ReadGroup(
+    AdcConf_Group_EngTemp,
+    &amp;adcRaw
+  );
+
+  /* 2. Convert to voltage */
+  voltage = (float32)adcRaw
+            * ADC_VREF / ADC_MAX;
+
+  /* 3. Convert to temperature */
+  tempC = voltage / TEMP_SCALE
+          + TEMP_OFFSET;
+
+  /* 4. Provide calibrated value
+   *    to SWCs via RTE */
+  (void)Rte_Write_PPort_EngTemp(
+    tempC
+  );
+}
+
+/* SWCs see only calibrated °C,
+ * not raw ADC counts or channel
+ * numbers — full abstraction. */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Centralisez toutes les conversions ADC→physique dans l'IoHwAb. Les SWC applicatifs ne doivent <strong>jamais</strong> appeler directement les APIs MCAL (Adc_ReadGroup, Dio_ReadChannel). Cela garantit la portabilité ECU et simplifie les tests unitaires des SWC.</span><span class="i18n-en"><strong>Tip:</strong> Centralize all ADC→physical conversions in IoHwAb. Application SWCs should <strong>never</strong> directly call MCAL APIs (Adc_ReadGroup, Dio_ReadChannel). This ensures ECU portability and simplifies SWC unit testing.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="ea.html" class="prev">← Ea</a>
+        <a href="index.html" class="next"><span class="i18n-fr">Tous les modules →</span><span class="i18n-en">All Modules →</span></a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BSW — Dem | autosar-fullstack.dev</title>
+  <meta name="description" content="Module AUTOSAR Dem — Diagnostic Event Manager">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script src="../assets/js/i18n.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="navbar container">
+    <a href="../index.html" class="nav-brand">&lt;<span>autosar</span>-fullstack /&gt;</a>
+    <button class="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+    <ul class="nav-links">
+      <li><a href="../index.html"><span class="i18n-fr">Accueil</span><span class="i18n-en">Home</span></a></li>
+      <li><a href="../about.html"><span class="i18n-fr">À propos</span><span class="i18n-en">About</span></a></li>
+      <li><a href="../architecture.html">Architecture</a></li>
+      <li class="nav-dropdown">
+        <a href="../asw/introduction.html">ASW</a>
+        <ul class="dropdown-menu">
+          <li><a href="../asw/introduction.html">Introduction</a></li>
+          <li><a href="../asw/swc.html">SWC</a></li>
+          <li><a href="../asw/cdd.html">CDD</a></li>
+          <li><a href="../asw/arxml-xdm.html">ARXML / XDM</a></li>
+        </ul>
+      </li>
+      <li><a href="index.html" class="active">BSW</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+    </ul>
+    <button class="lang-switch" aria-label="Changer de langue">
+      <span class="lang-label-fr active">FR</span><span class="lang-sep"></span><span class="lang-label-en">EN</span>
+    </button>
+  </nav>
+</header>
+
+<section class="content-header">
+  <div class="container">
+    <h1><span class="i18n-fr">Dem — Gestionnaire d'Événements Diagnostic</span><span class="i18n-en">Dem — Diagnostic Event Manager</span></h1>
+    <p><span class="i18n-fr">Gère les événements de diagnostic (DTCs), le debouncing, le stockage en mémoire d'événements et les freeze frames / extended data.</span><span class="i18n-en">Manages diagnostic events (DTCs), debouncing, event memory storage and freeze frames / extended data.</span></p>
+  </div>
+</section>
+
+<div class="container">
+  <div class="page-with-sidebar">
+    <aside class="sidebar">
+      <div class="sidebar-title"><span class="i18n-fr">Couche Services</span><span class="i18n-en">Services Layer</span></div>
+      <ul class="sidebar-links">
+        <li><a href="index.html"><span class="i18n-fr">← Tous les modules</span><span class="i18n-en">← All Modules</span></a></li>
+        <li><a href="com.html">Com</a></li>
+        <li><a href="comm.html">ComM</a></li>
+        <li><a href="nm.html">Nm</a></li>
+        <li><a href="ecum.html">EcuM</a></li>
+        <li><a href="bswwm.html">BswM</a></li>
+        <li><a href="dcm.html">Dcm</a></li>
+        <li><a href="dem.html" class="active">Dem</a></li>
+        <li><a href="nvm.html">NvM</a></li>
+        <li><a href="wdgM.html">WdgM</a></li>
+        <li><a href="os.html">OS</a></li>
+        <li><a href="rte.html">RTE</a></li>
+      </ul>
+      <div class="sidebar-title mt-3"><span class="i18n-fr">Sur cette page</span><span class="i18n-en">On this page</span></div>
+      <ul class="sidebar-links">
+        <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
+        <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
+        <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
+      </ul>
+    </aside>
+
+    <main class="content-body">
+      <h2 id="overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></h2>
+      <p><span class="i18n-fr">Le <strong>Dem</strong> centralise le reporting d'erreurs de tous les modules BSW et SWC. Il gère le cycle de vie des DTCs (Diagnostic Trouble Codes) : qualification par debouncing, stockage en mémoire d'événements (primary, secondary, mirror), capture des freeze frames et extended data records.</span><span class="i18n-en"><strong>Dem</strong> centralizes error reporting from all BSW modules and SWCs. It manages the DTC lifecycle: qualification via debouncing, event memory storage (primary, secondary, mirror), freeze frame capture and extended data records.</span></p>
+
+      <h3><span class="i18n-fr">Dépendances principales</span><span class="i18n-en">Key Dependencies</span></h3>
+      <ul>
+        <li><strong>NvM</strong> — <span class="i18n-fr">persistance de la mémoire d'événements</span><span class="i18n-en">event memory persistence</span></li>
+        <li><strong>Dcm</strong> — <span class="i18n-fr">lecture / effacement des DTCs via UDS</span><span class="i18n-en">DTC read / clear via UDS</span></li>
+        <li><strong>FiM</strong> — <span class="i18n-fr">inhibition de fonctions selon les DTCs</span><span class="i18n-en">function inhibition based on DTCs</span></li>
+      </ul>
+
+      <h2 id="config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></h2>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Conteneur</span><span class="i18n-en">Container</span></th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>DemEventParameter</td><td><span class="i18n-fr">Événement de diagnostic (DTC, debouncing, priorité)</span><span class="i18n-en">Diagnostic event (DTC, debouncing, priority)</span></td></tr>
+          <tr><td>DemDTCAttributes</td><td><span class="i18n-fr">Attributs du DTC (severity, group)</span><span class="i18n-en">DTC attributes (severity, group)</span></td></tr>
+          <tr><td>DemFreezeFrameClass</td><td><span class="i18n-fr">Structure des freeze frames capturées</span><span class="i18n-en">Captured freeze frame structure</span></td></tr>
+          <tr><td>DemDebounceAlgorithm</td><td><span class="i18n-fr">Algorithme de debouncing (counter-based)</span><span class="i18n-en">Debouncing algorithm (counter-based)</span></td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="examples"><span class="i18n-fr">Exemples ARXML / C</span><span class="i18n-en">ARXML / C Examples</span></h2>
+
+      <div class="code-split-title"><span class="badge badge-runnable">DTC</span> <span class="i18n-fr">DemEventParameter &amp; report d'erreur</span><span class="i18n-en">DemEventParameter &amp; Error Reporting</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Configuration d'un événement de diagnostic avec debouncing counter-based en ARXML, et report d'erreur depuis un SWC en C.</span><span class="i18n-en">Diagnostic event configuration with counter-based debouncing in ARXML, and error reporting from a SWC in C.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;DEM-EVENT-PARAMETER&gt;
+  &lt;SHORT-NAME&gt;
+    SensorOverTemp
+  &lt;/SHORT-NAME&gt;
+  &lt;DEM-EVENT-CLASS-REF&gt;
+    DTC_OverTemperature
+  &lt;/DEM-EVENT-CLASS-REF&gt;
+  &lt;DTC-NUMBER&gt;0x900114&lt;/DTC-NUMBER&gt;
+
+  &lt;DEM-DEBOUNCE-ALGORITHM-CLASS&gt;
+    &lt;DEM-DEBOUNCE-COUNTER-BASED&gt;
+      &lt;DEBOUNCE-BEHAVIOR&gt;
+        FREEZE
+      &lt;/DEBOUNCE-BEHAVIOR&gt;
+      &lt;THRESHOLD-FAILED&gt;
+        3
+      &lt;/THRESHOLD-FAILED&gt;
+      &lt;THRESHOLD-PASSED&gt;
+        -3
+      &lt;/THRESHOLD-PASSED&gt;
+      &lt;STEP-SIZE&gt;1&lt;/STEP-SIZE&gt;
+    &lt;/DEM-DEBOUNCE-COUNTER-BASED&gt;
+  &lt;/DEM-DEBOUNCE-ALGORITHM-CLASS&gt;
+
+  &lt;DEM-FREEZE-FRAME-CLASS-REF&gt;
+    FreezeFrame_Standard
+  &lt;/DEM-FREEZE-FRAME-CLASS-REF&gt;
+&lt;/DEM-EVENT-PARAMETER&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — SWC / BSW Module</span>
+<pre><code>#include "Dem.h"
+
+/* Generated event ID */
+#define DemConf_SensorOverTemp  12U
+
+void MonitorSensorTemp(float32 temp)
+{
+  if (temp &gt; 120.0f)
+  {
+    /* Report FAILED — Dem increments
+     * the debounce counter. After 3
+     * consecutive FAILED reports,
+     * the DTC is qualified. */
+    Dem_SetEventStatus(
+      DemConf_SensorOverTemp,
+      DEM_EVENT_STATUS_FAILED
+    );
+  }
+  else
+  {
+    /* Report PASSED — counter
+     * decrements toward -3. */
+    Dem_SetEventStatus(
+      DemConf_SensorOverTemp,
+      DEM_EVENT_STATUS_PASSED
+    );
+  }
+}
+
+/* When DTC qualifies:
+ *  - Freeze frame captured
+ *  - Stored in primary memory
+ *  - Persisted via NvM
+ *  - Readable via Dcm (0x19) */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
+      <div class="info-box success">
+        <span class="i18n-fr"><strong>Conseil :</strong> Calibrez les seuils de debouncing en fonction de la périodicité du monitoring. Un seuil trop bas provoque des DTCs intermittents ; trop haut retarde la détection. Utilisez <code>DEM_EVENT_STATUS_PREFAILED/PREPASSED</code> pour un contrôle plus fin.</span><span class="i18n-en"><strong>Tip:</strong> Calibrate debounce thresholds based on monitoring periodicity. A threshold too low causes intermittent DTCs; too high delays detection. Use <code>DEM_EVENT_STATUS_PREFAILED/PREPASSED</code> for finer control.</span>
+      </div>
+
+      <nav class="prev-next">
+        <a href="dcm.html" class="prev">← Dcm</a>
+        <a href="nvm.html" class="next">NvM →</a>
+      </nav>
+    </main>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2025 Yann Nicaise — autosar-fullstack.dev</p>
+  </div>
+</footer>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
