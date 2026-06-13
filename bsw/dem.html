@@ -59,6 +59,7 @@
         <li><a href="bswwm.html">BswM</a></li>
         <li><a href="dcm.html">Dcm</a></li>
         <li><a href="dem.html" class="active">Dem</a></li>
+        <li><a href="fim.html">FiM</a></li>
         <li><a href="nvm.html">NvM</a></li>
         <li><a href="wdgM.html">WdgM</a></li>
         <li><a href="os.html">OS</a></li>
@@ -69,6 +70,9 @@
         <li><a href="#overview"><span class="i18n-fr">Vue d'ensemble</span><span class="i18n-en">Overview</span></a></li>
         <li><a href="#config"><span class="i18n-fr">Configuration clé</span><span class="i18n-en">Key Configuration</span></a></li>
         <li><a href="#examples">ARXML / C</a></li>
+        <li><a href="#operation-cycle">OperationCycle</a></li>
+        <li><a href="#aging"><span class="i18n-fr">Aging &amp; Healing</span><span class="i18n-en">Aging &amp; Healing</span></a></li>
+        <li><a href="#event-memory"><span class="i18n-fr">Mémoire d'événements</span><span class="i18n-en">Event Memory</span></a></li>
         <li><a href="#tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></a></li>
       </ul>
     </aside>
@@ -170,6 +174,155 @@ void MonitorSensorTemp(float32 temp)
         </div>
       </div>
 
+      <h2 id="operation-cycle">OperationCycle</h2>
+      <p><span class="i18n-fr">Un <strong>OperationCycle</strong> représente une période d'activité significative pour le Dem : cycle d'allumage (<em>ignition cycle</em>), cycle de conduite (<em>driving cycle</em>), cycle OBD, etc. Chaque événement Dem est rattaché à un ou plusieurs cycles via <code>DemOperationCycleRef</code>. Le passage d'un cycle à l'état <code>STARTED</code> ou <code>STOPPED</code> déclenche la réinitialisation des compteurs de debouncing, l'évaluation du healing et l'incrément des compteurs d'aging.</span><span class="i18n-en">An <strong>OperationCycle</strong> represents a meaningful activity period for the Dem: ignition cycle, driving cycle, OBD cycle, etc. Each Dem event is linked to one or more cycles via <code>DemOperationCycleRef</code>. Transitioning a cycle to <code>STARTED</code> or <code>STOPPED</code> triggers debounce counter reset, healing evaluation, and aging counter increment.</span></p>
+
+      <div class="code-split-title"><span class="badge badge-cs">Cycle</span> <span class="i18n-fr">DemOperationCycle ARXML &amp; gestion depuis EcuM / BSW</span><span class="i18n-en">DemOperationCycle ARXML &amp; management from EcuM / BSW</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Déclaration d'un cycle d'allumage en ARXML et pilotage du cycle depuis l'init/shutdown de l'ECU.</span><span class="i18n-en">Ignition cycle declaration in ARXML and cycle control from ECU init/shutdown.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;DEM-OPERATION-CYCLE&gt;
+  &lt;SHORT-NAME&gt;
+    IgnitionCycle
+  &lt;/SHORT-NAME&gt;
+  &lt;DEM-OPERATION-CYCLE-TYPE&gt;
+    DEM_OPCYC_IGNITION
+  &lt;/DEM-OPERATION-CYCLE-TYPE&gt;
+  &lt;DEM-AUTOMATIC-END&gt;
+    false
+  &lt;/DEM-AUTOMATIC-END&gt;
+&lt;/DEM-OPERATION-CYCLE&gt;
+
+&lt;!-- Link event to this cycle --&gt;
+&lt;DEM-EVENT-PARAMETER&gt;
+  &lt;SHORT-NAME&gt;SensorOverTemp&lt;/SHORT-NAME&gt;
+  &lt;DEM-OPERATION-CYCLE-REF&gt;
+    IgnitionCycle
+  &lt;/DEM-OPERATION-CYCLE-REF&gt;
+  ...
+&lt;/DEM-EVENT-PARAMETER&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — EcuM / BswM callback</span>
+<pre><code>#include "Dem.h"
+
+/* Called during ECU startup */
+void EcuM_OnGoRun(void)
+{
+  /* Notify Dem that the ignition
+   * cycle has started — resets
+   * debounce counters, notifies
+   * FiM, triggers healing check */
+  Dem_SetOperationCycleState(
+    DemConf_DemOperationCycle_IgnitionCycle,
+    DEM_CYCLE_STATE_START
+  );
+}
+
+/* Called during ECU shutdown */
+void EcuM_OnGoOffOne(void)
+{
+  /* Close cycle — triggers aging
+   * counter increment for all
+   * confirmed + tested events */
+  Dem_SetOperationCycleState(
+    DemConf_DemOperationCycle_IgnitionCycle,
+    DEM_CYCLE_STATE_END
+  );
+}</code></pre>
+        </div>
+      </div>
+
+      <h2 id="aging"><span class="i18n-fr">Aging &amp; Healing</span><span class="i18n-en">Aging &amp; Healing</span></h2>
+      <p><span class="i18n-fr"><strong>Healing</strong> et <strong>Aging</strong> sont deux mécanismes distincts de "guérison" d'un DTC :</span><span class="i18n-en"><strong>Healing</strong> and <strong>Aging</strong> are two distinct DTC recovery mechanisms:</span></p>
+      <ul>
+        <li><span class="i18n-fr"><strong>Healing</strong> — le DTC passe de <code>CONFIRMED &amp; FAILED</code> à <code>CONFIRMED &amp; PASSED</code> après N rapports PASSED consécutifs dans le même cycle. Il reste en mémoire mais le bit <em>TestFailed</em> est effacé. Contrôlé par <code>DemHealingCycleRef</code> et <code>DemHealingCycleCounterThreshold</code>.</span><span class="i18n-en"><strong>Healing</strong> — the DTC transitions from <code>CONFIRMED &amp; FAILED</code> to <code>CONFIRMED &amp; PASSED</code> after N consecutive PASSED reports within the same cycle. It stays in memory but the <em>TestFailed</em> bit is cleared. Controlled by <code>DemHealingCycleRef</code> and <code>DemHealingCycleCounterThreshold</code>.</span></li>
+        <li><span class="i18n-fr"><strong>Aging</strong> — après <code>DemAgingCycleCounterThreshold</code> cycles d'aging complets sans que l'événement soit détecté comme FAILED, le DTC est supprimé de la mémoire d'événements. Nécessite que le DTC soit préalablement healé. Contrôlé par <code>DemAgingCycleRef</code>.</span><span class="i18n-en"><strong>Aging</strong> — after <code>DemAgingCycleCounterThreshold</code> complete aging cycles without the event being detected as FAILED, the DTC is removed from event memory. Requires the DTC to be previously healed. Controlled by <code>DemAgingCycleRef</code>.</span></li>
+      </ul>
+
+      <div class="code-split-title"><span class="badge badge-runnable">DTC</span> <span class="i18n-fr">Configuration Aging &amp; Healing</span><span class="i18n-en">Aging &amp; Healing Configuration</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Paramétrage ARXML complet d'un DTC avec aging sur 40 cycles et healing sur 1 cycle, et lecture de l'âge depuis l'application.</span><span class="i18n-en">Full ARXML configuration of a DTC with 40-cycle aging and 1-cycle healing, plus age readback from application.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;DEM-DTC-ATTRIBUTES&gt;
+  &lt;SHORT-NAME&gt;
+    DTC_OverTemperature
+  &lt;/SHORT-NAME&gt;
+
+  &lt;!-- Aging: remove DTC after
+       40 fault-free ignition cycles --&gt;
+  &lt;DEM-AGING-CYCLE-REF&gt;
+    IgnitionCycle
+  &lt;/DEM-AGING-CYCLE-REF&gt;
+  &lt;DEM-AGING-CYCLE-COUNTER-THRESHOLD&gt;
+    40
+  &lt;/DEM-AGING-CYCLE-COUNTER-THRESHOLD&gt;
+  &lt;DEM-AGING-ALLOWED&gt;
+    true
+  &lt;/DEM-AGING-ALLOWED&gt;
+
+  &lt;!-- Healing: clear TestFailed
+       after 1 passed cycle --&gt;
+  &lt;DEM-HEALING-CYCLE-REF&gt;
+    IgnitionCycle
+  &lt;/DEM-HEALING-CYCLE-REF&gt;
+  &lt;DEM-HEALING-CYCLE-COUNTER-THRESHOLD&gt;
+    1
+  &lt;/DEM-HEALING-CYCLE-COUNTER-THRESHOLD&gt;
+
+&lt;/DEM-DTC-ATTRIBUTES&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — <span class="i18n-fr">Lecture de l'âge</span><span class="i18n-en">Age Readback</span></span>
+<pre><code>#include "Dem.h"
+
+/* Read the current aging counter
+ * of a DTC (e.g. for engineering
+ * purposes or end-of-line test) */
+void ReadDTCAgingCounter(void)
+{
+  uint8 agingCounter = 0U;
+
+  /* Returns number of fault-free
+   * cycles elapsed since healing.
+   * Range: 0 .. Threshold (40) */
+  (void)Dem_GetDTCStatusAvailabilityMask(
+    0x900114UL,  /* DTC number */
+    DEM_DTC_FORMAT_UDS,
+    &amp;agingCounter
+  );
+}
+
+/* DTC lifecycle summary:
+ *
+ * FAILED (debounce) ──► CONFIRMED
+ *        │
+ *   PASSED x1 cycle
+ *        │
+ *        ▼
+ *     HEALED (still in memory)
+ *        │
+ *   PASSED x40 cycles
+ *        │
+ *        ▼
+ *     AGED (removed from memory) */</code></pre>
+        </div>
+      </div>
+
+      <h2 id="event-memory"><span class="i18n-fr">Mémoire d'événements</span><span class="i18n-en">Event Memory</span></h2>
+      <p><span class="i18n-fr">Le Dem gère jusqu'à trois types de mémoires d'événements indépendantes, chacune configurée avec sa propre capacité et ses propres règles de déplacement (<em>displacement</em>) :</span><span class="i18n-en">The Dem manages up to three independent event memory types, each configured with its own capacity and displacement rules:</span></p>
+      <table>
+        <thead><tr><th><span class="i18n-fr">Type</span><span class="i18n-en">Type</span></th><th><span class="i18n-fr">Rôle</span><span class="i18n-en">Role</span></th><th><span class="i18n-fr">Conteneur ARXML</span><span class="i18n-en">ARXML Container</span></th></tr></thead>
+        <tbody>
+          <tr><td>Primary</td><td><span class="i18n-fr">Mémoire principale — DTCs confirmés, freeze frames, extended data</span><span class="i18n-en">Main memory — confirmed DTCs, freeze frames, extended data</span></td><td><code>DemPrimaryMemory</code></td></tr>
+          <tr><td>Secondary</td><td><span class="i18n-fr">Mémoire secondaire optionnelle — DTCs de priorité inférieure ou OEM-specific</span><span class="i18n-en">Optional secondary memory — lower-priority DTCs or OEM-specific</span></td><td><code>DemSecondaryMemory</code></td></tr>
+          <tr><td>Mirror</td><td><span class="i18n-fr">Copie RAM de la mémoire primaire — accès rapide sans lecture NvM</span><span class="i18n-en">RAM copy of primary memory — fast access without NvM read</span></td><td><code>DemMirrorMemory</code></td></tr>
+        </tbody>
+      </table>
+      <p><span class="i18n-fr">Lorsque la mémoire est pleine, le Dem applique une politique de <strong>displacement</strong> : le DTC de plus faible priorité (<code>DemDTCPriority</code>) est écrasé par le nouveau DTC. En cas d'égalité, le plus ancien est déplacé.</span><span class="i18n-en">When memory is full, the Dem applies a <strong>displacement</strong> policy: the DTC with the lowest priority (<code>DemDTCPriority</code>) is overwritten by the new DTC. In case of tie, the oldest is displaced.</span></p>
+
       <h2 id="tips"><span class="i18n-fr">Bonnes pratiques</span><span class="i18n-en">Best Practices</span></h2>
       <div class="info-box success">
         <span class="i18n-fr"><strong>Conseil :</strong> Calibrez les seuils de debouncing en fonction de la périodicité du monitoring. Un seuil trop bas provoque des DTCs intermittents ; trop haut retarde la détection. Utilisez <code>DEM_EVENT_STATUS_PREFAILED/PREPASSED</code> pour un contrôle plus fin.</span><span class="i18n-en"><strong>Tip:</strong> Calibrate debounce thresholds based on monitoring periodicity. A threshold too low causes intermittent DTCs; too high delays detection. Use <code>DEM_EVENT_STATUS_PREFAILED/PREPASSED</code> for finer control.</span>
@@ -177,7 +330,7 @@ void MonitorSensorTemp(float32 temp)
 
       <nav class="prev-next">
         <a href="dcm.html" class="prev">← Dcm</a>
-        <a href="nvm.html" class="next">NvM →</a>
+        <a href="fim.html" class="next">FiM →</a>
       </nav>
     </main>
   </div>
