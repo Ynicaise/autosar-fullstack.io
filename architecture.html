@@ -57,17 +57,17 @@
     <div class="arch-diagram">
       <div class="arch-layer asw">
         <div class="arch-label" style="color:var(--green)"><span class="i18n-fr">Couche Application (ASW)</span><span class="i18n-en">Application Layer (ASW)</span></div>
-        <div class="arch-detail"><a href="asw/swc.html" style="color:inherit;text-decoration:underline dotted;">SWC</a> &nbsp;|&nbsp; <a href="asw/cdd.html" style="color:inherit;text-decoration:underline dotted;">CDD</a> &nbsp;|&nbsp; Runnables &nbsp;|&nbsp; Ports &nbsp;|&nbsp; Interfaces</div>
+        <div class="arch-detail"><a href="asw/swc.html" style="color:inherit;text-decoration:underline dotted;">SWC</a> &nbsp;|&nbsp; <a href="asw/cdd.html" style="color:inherit;text-decoration:underline dotted;">CDD</a> &nbsp;|&nbsp; <a href="asw/introduction.html#runnables" style="color:inherit;text-decoration:underline dotted;">Runnables</a> &nbsp;|&nbsp; <a href="asw/introduction.html#ports" style="color:inherit;text-decoration:underline dotted;">Ports</a> &nbsp;|&nbsp; <a href="asw/swc.html" style="color:inherit;text-decoration:underline dotted;">Interfaces</a></div>
       </div>
       <div class="arch-connector">&#9660;</div>
       <div class="arch-layer rte">
-        <div class="arch-label" style="color:var(--purple)"><span class="i18n-fr">Environnement d'exécution (RTE)</span><span class="i18n-en">Runtime Environment (RTE)</span></div>
+        <div class="arch-label" style="color:var(--purple)"><a href="bsw/rte.html" style="color:inherit;text-decoration:underline dotted;"><span class="i18n-fr">Environnement d'exécution (RTE)</span><span class="i18n-en">Runtime Environment (RTE)</span></a></div>
         <div class="arch-detail"><span class="i18n-fr">Couche de communication générée &nbsp;|&nbsp; Sender-Receiver &nbsp;|&nbsp; Client-Server</span><span class="i18n-en">Generated communication layer &nbsp;|&nbsp; Sender-Receiver &nbsp;|&nbsp; Client-Server</span></div>
       </div>
       <div class="arch-connector">&#9660;</div>
       <div class="arch-layer services">
         <div class="arch-label" style="color:var(--accent)"><span class="i18n-fr">Couche Services</span><span class="i18n-en">Services Layer</span></div>
-        <div class="arch-detail"><a href="bsw/com.html" style="color:inherit;text-decoration:underline dotted;">Com</a> &bull; <a href="bsw/dcm.html" style="color:inherit;text-decoration:underline dotted;">Dcm</a> &bull; <a href="bsw/dem.html" style="color:inherit;text-decoration:underline dotted;">Dem</a> &bull; <a href="bsw/fim.html" style="color:inherit;text-decoration:underline dotted;">FiM</a> &bull; <a href="bsw/nvm.html" style="color:inherit;text-decoration:underline dotted;">NvM</a> &bull; <a href="bsw/ecum.html" style="color:inherit;text-decoration:underline dotted;">EcuM</a> &bull; <a href="bsw/bswwm.html" style="color:inherit;text-decoration:underline dotted;">BswM</a> &bull; <a href="bsw/wdgM.html" style="color:inherit;text-decoration:underline dotted;">WdgM</a> &bull; <a href="bsw/os.html" style="color:inherit;text-decoration:underline dotted;">OS</a></div>
+        <div class="arch-detail"><a href="bsw/com.html" style="color:inherit;text-decoration:underline dotted;">Com</a> &bull; <a href="bsw/dcm.html" style="color:inherit;text-decoration:underline dotted;">Dcm</a> &bull; <a href="bsw/dem.html" style="color:inherit;text-decoration:underline dotted;">Dem</a> &bull; <a href="bsw/fim.html" style="color:inherit;text-decoration:underline dotted;">FiM</a> &bull; <a href="bsw/nvm.html" style="color:inherit;text-decoration:underline dotted;">NvM</a> &bull; <a href="bsw/ecum.html" style="color:inherit;text-decoration:underline dotted;">EcuM</a> &bull; <a href="bsw/bswwm.html" style="color:inherit;text-decoration:underline dotted;">BswM</a> &bull; <a href="bsw/wdgM.html" style="color:inherit;text-decoration:underline dotted;">WdgM</a> &bull; <a href="bsw/comm.html" style="color:inherit;text-decoration:underline dotted;">ComM</a> &bull; <a href="bsw/nm.html" style="color:inherit;text-decoration:underline dotted;">Nm</a> &bull; <a href="bsw/os.html" style="color:inherit;text-decoration:underline dotted;">OS</a></div>
       </div>
       <div class="arch-connector">&#9660;</div>
       <div class="arch-layer services" style="background:rgba(88,166,255,.05); border-color:rgba(88,166,255,.2);">
@@ -103,6 +103,7 @@
         <div class="card-icon" style="color:var(--purple)">&#9670;</div>
         <h3>RTE</h3>
         <p><span class="i18n-fr">Couche de communication automatiquement générée. Gère les patterns Sender-Receiver, Client-Server, Mode-Switch et le mapping des runnables aux tâches OS.</span><span class="i18n-en">Automatically generated communication layer. Handles Sender-Receiver, Client-Server, Mode-Switch patterns and runnable-to-OS-task mapping.</span></p>
+        <a href="bsw/rte.html" class="btn btn-outline btn-sm mt-2"><span class="i18n-fr">Explorer →</span><span class="i18n-en">Explore →</span></a>
       </div>
       <div class="card">
         <div class="card-icon text-accent">&#9670;</div>
