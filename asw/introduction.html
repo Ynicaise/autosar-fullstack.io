@@ -71,6 +71,12 @@
         <li><a href="#swc-types"><span class="i18n-fr">Types de SWC</span><span class="i18n-en">SWC Types</span></a></li>
         <li><a href="#ports"><span class="i18n-fr">Ports &amp; Interfaces</span><span class="i18n-en">Ports &amp; Interfaces</span></a></li>
         <li><a href="#runnables"><span class="i18n-fr">Runnables &amp; Événements</span><span class="i18n-en">Runnables &amp; Events</span></a></li>
+        <li><a href="#event-examples"><span class="i18n-fr">↳ Exemples ARXML &amp; C</span><span class="i18n-en">↳ ARXML &amp; C Examples</span></a></li>
+        <li><a href="#timing-event">&nbsp;&nbsp;TimingEvent</a></li>
+        <li><a href="#init-event">&nbsp;&nbsp;InitEvent</a></li>
+        <li><a href="#data-received-event">&nbsp;&nbsp;DataReceivedEvent</a></li>
+        <li><a href="#mode-switch-event">&nbsp;&nbsp;ModeSwitchEvent</a></li>
+        <li><a href="#operation-invoked-event">&nbsp;&nbsp;OperationInvokedEvent</a></li>
       </ul>
     </aside>
 
@@ -140,6 +146,269 @@
 
       <div class="info-box success">
         <span class="i18n-fr"><strong>Conseil :</strong> Regroupez les runnables de même période dans la même tâche pour minimiser l'overhead de changement de contexte tout en maintenant un ordonnancement déterministe.</span><span class="i18n-en"><strong>Tip:</strong> Group runnables with the same period into the same task to minimize context switch overhead while maintaining deterministic scheduling.</span>
+      </div>
+
+      <!-- ===== Detailed event examples ===== -->
+      <h2 id="event-examples"><span class="i18n-fr">Exemples détaillés par type d'événement</span><span class="i18n-en">Detailed Examples by Event Type</span></h2>
+      <p><span class="i18n-fr">Chaque type d'événement RTE possède une description ARXML distincte et génère un squelette C spécifique. Les exemples ci-dessous illustrent les 5 patterns fondamentaux.</span><span class="i18n-en">Each RTE event type has a distinct ARXML description and generates a specific C skeleton. The examples below illustrate the 5 fundamental patterns.</span></p>
+
+      <!-- TimingEvent -->
+      <div class="code-split-title" id="timing-event"><span class="badge badge-runnable">TimingEvent</span> <span class="i18n-fr">Déclenchement périodique — boucle de contrôle 10 ms</span><span class="i18n-en">Periodic trigger — 10 ms control loop</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Le <code>TimingEvent</code> lie une <em>RunnableEntity</em> à une période fixe (en secondes). Le RTE génère l'appel depuis la tâche OS correspondante. C'est l'événement le plus courant dans les SWC de contrôle.</span><span class="i18n-en">The <code>TimingEvent</code> binds a <em>RunnableEntity</em> to a fixed period (in seconds). The RTE generates the call from the corresponding OS task. This is the most common event in control SWCs.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;SWC-INTERNAL-BEHAVIOR&gt;
+  &lt;SHORT-NAME&gt;EngineCtrl_IB&lt;/SHORT-NAME&gt;
+  &lt;RUNNABLES&gt;
+    &lt;RUNNABLE-ENTITY&gt;
+      &lt;SHORT-NAME&gt;
+        RE_EngineCtrl_10ms
+      &lt;/SHORT-NAME&gt;
+      &lt;CAN-BE-INVOKED-CONCURRENTLY&gt;
+        false
+      &lt;/CAN-BE-INVOKED-CONCURRENTLY&gt;
+    &lt;/RUNNABLE-ENTITY&gt;
+  &lt;/RUNNABLES&gt;
+  &lt;EVENTS&gt;
+    &lt;TIMING-EVENT&gt;
+      &lt;SHORT-NAME&gt;
+        TE_EngineCtrl_10ms
+      &lt;/SHORT-NAME&gt;
+      &lt;START-ON-EVENT-REF
+        DEST="RUNNABLE-ENTITY"&gt;
+        /EngineCtrl/RE_EngineCtrl_10ms
+      &lt;/START-ON-EVENT-REF&gt;
+      &lt;PERIOD&gt;0.01&lt;/PERIOD&gt;
+    &lt;/TIMING-EVENT&gt;
+  &lt;/EVENTS&gt;
+&lt;/SWC-INTERNAL-BEHAVIOR&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — EngineCtrl_Runnable.c</span>
+<pre><code>/* Runnable : RE_EngineCtrl_10ms
+ * Trigger  : TimingEvent — 10 ms
+ * OS Task  : OsTask_10ms         */
+FUNC(void, ENGINECTRL_CODE)
+RE_EngineCtrl_10ms(void)
+{
+  float32 speed;
+  float32 torqueCmd;
+
+  (void)Rte_Read_RPort_Speed_Speed(
+    &amp;speed);
+
+  torqueCmd =
+    EngineCtrl_ComputeTorque(speed);
+
+  (void)Rte_Write_PPort_TorqueCmd(
+    torqueCmd);
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- InitEvent -->
+      <div class="code-split-title" id="init-event"><span class="badge badge-init">InitEvent</span> <span class="i18n-fr">Initialisation du SWC au démarrage du RTE</span><span class="i18n-en">SWC initialization at RTE startup</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">L'<code>InitEvent</code> déclenche la runnable d'initialisation une seule fois, lors de l'appel de <code>Rte_Start()</code>, avant l'entrée dans les tâches cycliques. Aucun attribut <code>PERIOD</code> : l'événement est one-shot.</span><span class="i18n-en">The <code>InitEvent</code> triggers the init runnable exactly once during <code>Rte_Start()</code>, before cyclic tasks begin. No <code>PERIOD</code> attribute: the event is one-shot.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;SWC-INTERNAL-BEHAVIOR&gt;
+  &lt;SHORT-NAME&gt;EngineCtrl_IB&lt;/SHORT-NAME&gt;
+  &lt;RUNNABLES&gt;
+    &lt;RUNNABLE-ENTITY&gt;
+      &lt;SHORT-NAME&gt;
+        RE_EngineCtrl_Init
+      &lt;/SHORT-NAME&gt;
+      &lt;CAN-BE-INVOKED-CONCURRENTLY&gt;
+        false
+      &lt;/CAN-BE-INVOKED-CONCURRENTLY&gt;
+    &lt;/RUNNABLE-ENTITY&gt;
+  &lt;/RUNNABLES&gt;
+  &lt;EVENTS&gt;
+    &lt;INIT-EVENT&gt;
+      &lt;SHORT-NAME&gt;
+        IE_EngineCtrl_Init
+      &lt;/SHORT-NAME&gt;
+      &lt;START-ON-EVENT-REF
+        DEST="RUNNABLE-ENTITY"&gt;
+        /EngineCtrl/RE_EngineCtrl_Init
+      &lt;/START-ON-EVENT-REF&gt;
+    &lt;/INIT-EVENT&gt;
+  &lt;/EVENTS&gt;
+&lt;/SWC-INTERNAL-BEHAVIOR&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — EngineCtrl_Runnable.c</span>
+<pre><code>/* Runnable : RE_EngineCtrl_Init
+ * Trigger  : InitEvent — one-shot
+ * Called by: Rte_Start()          */
+FUNC(void, ENGINECTRL_CODE)
+RE_EngineCtrl_Init(void)
+{
+  EngineCtrl_State.torque    = 0.0f;
+  EngineCtrl_State.mode      =
+    CTRL_MODE_OFF;
+  EngineCtrl_State.errorFlag = FALSE;
+
+  (void)Rte_Write_PPort_TorqueCmd(
+    0.0f);
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- DataReceivedEvent -->
+      <div class="code-split-title" id="data-received-event"><span class="badge badge-sr">DataReceivedEvent</span> <span class="i18n-fr">Traitement événementiel d'une nouvelle donnée S/R</span><span class="i18n-en">Event-driven processing of new S/R data</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Le <code>DataReceivedEvent</code> déclenche la runnable dès qu'une nouvelle valeur est disponible sur le R-Port S/R ciblé. La référence <code>DATA-IREF</code> identifie précisément le port et l'élément de données. Utiliser <code>Rte_Receive</code> (accès explicite) pour lire la valeur reçue.</span><span class="i18n-en">The <code>DataReceivedEvent</code> triggers the runnable as soon as a new value is available on the targeted S/R R-Port. The <code>DATA-IREF</code> reference precisely identifies the port and data element. Use <code>Rte_Receive</code> (explicit access) to read the received value.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;DATA-RECEIVED-EVENT&gt;
+  &lt;SHORT-NAME&gt;DRE_OnSpeed&lt;/SHORT-NAME&gt;
+  &lt;START-ON-EVENT-REF
+    DEST="RUNNABLE-ENTITY"&gt;
+    /EngineCtrl/RE_OnSpeedReceived
+  &lt;/START-ON-EVENT-REF&gt;
+  &lt;DATA-IREF&gt;
+    &lt;PORT-PROTOTYPE-REF
+      DEST="R-PORT-PROTOTYPE"&gt;
+      /EngineCtrl/RPort_Speed
+    &lt;/PORT-PROTOTYPE-REF&gt;
+    &lt;TARGET-DATA-PROTOTYPE-REF
+      DEST=
+      "VARIABLE-DATA-PROTOTYPE"&gt;
+      /Interfaces/If_SpeedData/Speed
+    &lt;/TARGET-DATA-PROTOTYPE-REF&gt;
+  &lt;/DATA-IREF&gt;
+&lt;/DATA-RECEIVED-EVENT&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — EngineCtrl_Runnable.c</span>
+<pre><code>/* Runnable : RE_OnSpeedReceived
+ * Trigger  : DataReceivedEvent
+ *            RPort_Speed / Speed  */
+FUNC(void, ENGINECTRL_CODE)
+RE_OnSpeedReceived(void)
+{
+  float32 speed;
+  Std_ReturnType ret;
+
+  ret = Rte_Receive_RPort_Speed_Speed(
+    &amp;speed);
+
+  if (ret == RTE_E_OK)
+  {
+    EngineCtrl_State.lastSpeed = speed;
+    EngineCtrl_ProcessSpeed(speed);
+  }
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- ModeSwitchEvent -->
+      <div class="code-split-title" id="mode-switch-event"><span class="badge badge-runnable">ModeSwitchEvent</span> <span class="i18n-fr">Réaction aux transitions de mode (EcuM RUN)</span><span class="i18n-en">Reacting to mode transitions (EcuM RUN)</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">Le <code>SWC-MODE-SWITCH-EVENT</code> déclenche une runnable lors de l'entrée (<code>ENTERED</code>) ou de la sortie (<code>EXITED</code>) d'un mode déclaré dans un <code>ModeDeclarationGroup</code>. Il faut une runnable et un événement distincts par direction de transition.</span><span class="i18n-en">The <code>SWC-MODE-SWITCH-EVENT</code> triggers a runnable on entry (<code>ENTERED</code>) or exit (<code>EXITED</code>) from a mode declared in a <code>ModeDeclarationGroup</code>. A separate runnable and event are required for each transition direction.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;SWC-MODE-SWITCH-EVENT&gt;
+  &lt;SHORT-NAME&gt;MSE_Run_Enter&lt;/SHORT-NAME&gt;
+  &lt;START-ON-EVENT-REF
+    DEST="RUNNABLE-ENTITY"&gt;
+    /EngineCtrl/RE_OnRun_Enter
+  &lt;/START-ON-EVENT-REF&gt;
+  &lt;ACTIVATION&gt;ENTERED&lt;/ACTIVATION&gt;
+  &lt;MODE-IREF&gt;
+    &lt;REQUIRING-PORT-PROTOTYPE-REF
+      DEST="R-PORT-PROTOTYPE"&gt;
+      /EngineCtrl/RPort_EcuMMode
+    &lt;/REQUIRING-PORT-PROTOTYPE-REF&gt;
+    &lt;TARGET-MODE-DECLARATION-REF
+      DEST="MODE-DECLARATION"&gt;
+      /AUTOSAR/EcuM/Modes/RUN
+    &lt;/TARGET-MODE-DECLARATION-REF&gt;
+  &lt;/MODE-IREF&gt;
+&lt;/SWC-MODE-SWITCH-EVENT&gt;
+
+&lt;SWC-MODE-SWITCH-EVENT&gt;
+  &lt;SHORT-NAME&gt;MSE_Run_Exit&lt;/SHORT-NAME&gt;
+  &lt;START-ON-EVENT-REF
+    DEST="RUNNABLE-ENTITY"&gt;
+    /EngineCtrl/RE_OnRun_Exit
+  &lt;/START-ON-EVENT-REF&gt;
+  &lt;ACTIVATION&gt;EXITED&lt;/ACTIVATION&gt;
+  &lt;!-- same MODE-IREF --&gt;
+&lt;/SWC-MODE-SWITCH-EVENT&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — EngineCtrl_Runnable.c</span>
+<pre><code>/* Trigger : ModeSwitchEvent
+ *           ENTERED EcuM/RUN      */
+FUNC(void, ENGINECTRL_CODE)
+RE_OnRun_Enter(void)
+{
+  EngineCtrl_State.mode =
+    CTRL_MODE_RUN;
+  EngineCtrl_EnableActuators();
+}
+
+/* Trigger : ModeSwitchEvent
+ *           EXITED EcuM/RUN       */
+FUNC(void, ENGINECTRL_CODE)
+RE_OnRun_Exit(void)
+{
+  EngineCtrl_State.mode =
+    CTRL_MODE_OFF;
+  EngineCtrl_DisableActuators();
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- OperationInvokedEvent -->
+      <div class="code-split-title" id="operation-invoked-event"><span class="badge badge-cs">OperationInvokedEvent</span> <span class="i18n-fr">Handler côté serveur d'un port Client-Server</span><span class="i18n-en">Server-side handler for a Client-Server port</span></div>
+      <p class="code-split-desc"><span class="i18n-fr">L'<code>OperationInvokedEvent</code> déclenche la runnable serveur lorsque le client appelle l'opération via le RTE. La runnable implémente le corps de la fonction serveur et retourne un <code>Std_ReturnType</code>. Le <code>OPERATION-IREF</code> cible le P-Port et l'opération exposée.</span><span class="i18n-en">The <code>OperationInvokedEvent</code> triggers the server runnable when the client invokes the operation through the RTE. The runnable implements the server function body and returns a <code>Std_ReturnType</code>. The <code>OPERATION-IREF</code> targets the P-Port and the exposed operation.</span></p>
+      <div class="code-split">
+        <div class="code-split-pane">
+          <span class="code-split-label label-arxml">ARXML</span>
+<pre><code>&lt;OPERATION-INVOKED-EVENT&gt;
+  &lt;SHORT-NAME&gt;
+    OIE_GetFaultCount
+  &lt;/SHORT-NAME&gt;
+  &lt;START-ON-EVENT-REF
+    DEST="RUNNABLE-ENTITY"&gt;
+    /DiagSrv/RE_GetFaultCount
+  &lt;/START-ON-EVENT-REF&gt;
+  &lt;OPERATION-IREF&gt;
+    &lt;CONTEXT-P-PORT-REF
+      DEST="P-PORT-PROTOTYPE"&gt;
+      /DiagSrv/PPort_DiagService
+    &lt;/CONTEXT-P-PORT-REF&gt;
+    &lt;TARGET-PROVIDED-OPERATION-REF
+      DEST=
+      "CLIENT-SERVER-OPERATION"&gt;
+      /Interfaces/If_DiagService
+        /GetFaultCount
+    &lt;/TARGET-PROVIDED-OPERATION-REF&gt;
+  &lt;/OPERATION-IREF&gt;
+&lt;/OPERATION-INVOKED-EVENT&gt;</code></pre>
+        </div>
+        <div class="code-split-pane">
+          <span class="code-split-label label-c">C — DiagSrv_Runnable.c</span>
+<pre><code>/* Runnable : RE_GetFaultCount
+ * Trigger  : OperationInvokedEvent
+ * Server   : PPort_DiagService
+ *            / GetFaultCount       */
+FUNC(Std_ReturnType, DIAGSRV_CODE)
+RE_GetFaultCount(
+  P2VAR(uint16, AUTOMATIC,
+    RTE_APPL_DATA) FaultCount)
+{
+  *FaultCount =
+    DiagSrv_CountActiveFaults();
+
+  return RTE_E_OK;
+}</code></pre>
+        </div>
       </div>
 
       <div class="mt-4" style="display:flex;gap:1rem;flex-wrap:wrap;">
